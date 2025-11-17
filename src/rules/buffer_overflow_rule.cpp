@@ -68,6 +68,8 @@ bool BufferOverflowVisitor::VisitArraySubscriptExpr(clang::ArraySubscriptExpr* e
     int64_t indexValue;
     if (tryGetConstantIndex(index, indexValue)) {
         // Check for out-of-bounds access
+        // Note: The check for "indexValue < 0" ensures indexValue is non-negative before
+        // the unsigned cast, preventing signed/unsigned comparison issues. This is safe.
         if (indexValue < 0 || static_cast<uint64_t>(indexValue) >= arraySize) {
             Issue issue;
             issue.file_path = context_->getSourceManager().getFilename(expr->getExprLoc()).str();

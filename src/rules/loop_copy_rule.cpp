@@ -82,10 +82,16 @@ bool LoopCopyVisitor::LoopBodyVisitor::VisitVarDecl(clang::VarDecl* decl) {
 }
 
 void LoopCopyVisitor::checkLoopBody(clang::Stmt* body, clang::SourceLocation loopLoc) {
-    if (!body) return;
+    // Defensive null check before traversal
+    if (!body) {
+        return;
+    }
 
     LoopBodyVisitor bodyVisitor(this);
-    bodyVisitor.TraverseStmt(body);
+    // Double-check body is still valid before traversal (defense-in-depth)
+    if (body) {
+        bodyVisitor.TraverseStmt(body);
+    }
 }
 
 bool LoopCopyVisitor::VisitForStmt(clang::ForStmt* forStmt) {

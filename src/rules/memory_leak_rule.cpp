@@ -1,7 +1,31 @@
 #include "rules/memory_leak_rule.h"
 #include <clang/AST/ExprCXX.h>
+#include <clang/AST/Type.h>
 
 namespace cpp_review {
+
+// Helper function to robustly check if a type is a smart pointer
+static bool isSmartPointerType(clang::QualType type) {
+    type = type.getCanonicalType().getUnqualifiedType();
+
+    // Check if it's a template specialization
+    if (const auto* templateType = type->getAs<clang::TemplateSpecializationType>()) {
+        if (auto* templateDecl = templateType->getTemplateName().getAsTemplateDecl()) {
+            std::string qualifiedName = templateDecl->getQualifiedNameAsString();
+            // Check for standard smart pointers
+            return qualifiedName == "std::unique_ptr" ||
+                   qualifiedName == "std::shared_ptr" ||
+                   qualifiedName == "std::weak_ptr";
+        }
+    }
+
+    // Fallback to string matching for edge cases (e.g., type aliases)
+    std::string typeName = type.getAsString();
+    return typeName.find("std::unique_ptr") != std::string::npos ||
+           typeName.find("std::shared_ptr") != std::string::npos ||
+           typeName.find("std::weak_ptr") != std::string::npos;
+}
+
 
 const clang::VarDecl* MemoryLeakVisitor::getVarDeclFromExpr(clang::Expr* expr) {
     if (!expr) return nullptr;
@@ -73,10 +97,8 @@ void MemoryLeakVisitor::checkForLeak(const clang::VarDecl* decl, const Allocatio
     }
 
     // Check if it's a smart pointer (no leak for smart pointers)
-    auto type = decl->getType();
-    std::string typeName = type.getAsString();
-    if (typeName.find("std::unique_ptr") != std::string::npos ||
-        typeName.find("std::shared_ptr") != std::string::npos) {
+    // Use robust type-based detection instead of fragile string matching
+    if (isSmartPointerType(decl->getType())) {
         return;
     }
 
