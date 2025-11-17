@@ -39,6 +39,7 @@ set(SOURCES
     src/report/html_reporter.cpp
     src/config/config.cpp
     src/cli/cli.cpp
+    src/llm/llm_enhancer.cpp
 )
 
 # Create executable

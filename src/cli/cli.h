@@ -12,6 +12,8 @@ struct CLIOptions {
     bool version = false;
     bool generate_html = false;
     std::string html_output = "report.html";
+    bool enable_ai = false;
+    std::string llm_provider = "rule-based";
 };
 
 class CLI {

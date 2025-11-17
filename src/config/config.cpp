@@ -75,6 +75,17 @@ void ConfigManager::parseLine(const std::string& line, Config& config) {
         std::string rule_id = key.substr(9); // Remove "severity_" prefix
         config.rule_severity[rule_id] = value;
     }
+    else if (key == "enable_ai_suggestions" || key == "ai_suggestions") {
+        std::string lower_value = value;
+        std::transform(lower_value.begin(), lower_value.end(), lower_value.begin(), ::tolower);
+        config.enable_ai_suggestions = (lower_value == "true" || lower_value == "yes" || lower_value == "1");
+    }
+    else if (key == "llm_provider") {
+        config.llm_provider = value;
+    }
+    else if (key == "llm_api_key" || key == "openai_api_key") {
+        config.llm_api_key = value;
+    }
 }
 
 Config ConfigManager::loadConfig(const std::string& config_file) {
@@ -100,6 +111,9 @@ Config ConfigManager::getDefaultConfig() {
     config.generate_html = false;
     config.html_output_file = "report.html";
     config.verbose = false;
+    config.enable_ai_suggestions = false;  // Disabled by default
+    config.llm_provider = "rule-based";    // Use rule-based by default
+    config.llm_api_key = "";
     return config;
 }
 

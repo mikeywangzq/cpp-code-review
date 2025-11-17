@@ -20,6 +20,11 @@ struct Config {
     // Analysis options
     std::string cpp_standard = "c++17";
     bool verbose = false;
+
+    // LLM Enhancement options
+    bool enable_ai_suggestions = false;
+    std::string llm_provider = "rule-based";  // "rule-based", "openai", "none"
+    std::string llm_api_key = "";             // For OpenAI or other providers
 };
 
 class ConfigManager {
