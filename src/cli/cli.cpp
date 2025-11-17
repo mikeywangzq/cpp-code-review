@@ -1,3 +1,8 @@
+/*
+ * 命令行接口实现
+ * 处理命令行参数解析和帮助信息显示
+ */
+
 #include "cli/cli.h"
 #include <iostream>
 #include <filesystem>
@@ -7,6 +12,11 @@ namespace cpp_review {
 
 namespace fs = std::filesystem;
 
+/**
+ * 判断文件是否为 C++ 源文件
+ * @param path 文件路径
+ * @return 如果是 C++ 源文件返回 true
+ */
 bool CLI::isSourceFile(const std::string& path) {
     static const std::vector<std::string> extensions = {
         ".cpp", ".cc", ".cxx", ".c++",
@@ -19,9 +29,16 @@ bool CLI::isSourceFile(const std::string& path) {
     return std::find(extensions.begin(), extensions.end(), ext) != extensions.end();
 }
 
+/**
+ * 解析命令行参数
+ * @param argc 参数数量
+ * @param argv 参数数组
+ * @return 解析后的选项结构
+ */
 CLIOptions CLI::parseArguments(int argc, char* argv[]) {
     CLIOptions options;
 
+    // 遍历所有命令行参数
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
 
@@ -51,12 +68,12 @@ CLIOptions CLI::parseArguments(int argc, char* argv[]) {
             options.generate_html = true;
         }
         else if (arg == "scan" && i + 1 < argc) {
-            // Next argument should be the path
+            // 扫描命令:下一个参数应该是路径
             ++i;
             std::string path = argv[i];
 
             if (fs::is_directory(path)) {
-                // Recursively find all C++ source files
+                // 递归查找目录中的所有 C++ 源文件
                 for (const auto& entry : fs::recursive_directory_iterator(path)) {
                     if (entry.is_regular_file() && isSourceFile(entry.path().string())) {
                         options.source_paths.push_back(entry.path().string());
@@ -64,6 +81,7 @@ CLIOptions CLI::parseArguments(int argc, char* argv[]) {
                 }
             }
             else if (fs::is_regular_file(path) && isSourceFile(path)) {
+                // 单个文件
                 options.source_paths.push_back(path);
             }
             else {
@@ -71,11 +89,11 @@ CLIOptions CLI::parseArguments(int argc, char* argv[]) {
             }
         }
         else if (arg == "--") {
-            // Everything after -- is for the compiler
+            // -- 之后的参数传递给编译器
             break;
         }
         else if (isSourceFile(arg)) {
-            // Direct file path
+            // 直接指定文件路径
             options.source_paths.push_back(arg);
         }
     }
@@ -83,6 +101,10 @@ CLIOptions CLI::parseArguments(int argc, char* argv[]) {
     return options;
 }
 
+/**
+ * 打印帮助信息
+ * 显示所有可用的命令和选项
+ */
 void CLI::printHelp() {
     std::cout << R"(
 C++ Code Review Agent - Static Analysis Tool
@@ -149,6 +171,10 @@ For more information, visit: https://github.com/yourusername/cpp-code-review
 )";
 }
 
+/**
+ * 打印版本信息
+ * 显示当前版本号和功能特性
+ */
 void CLI::printVersion() {
     std::cout << "C++ Code Review Agent v2.0.0\n";
     std::cout << "Built with Clang/LLVM AST analysis\n";

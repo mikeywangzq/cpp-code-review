@@ -1,14 +1,29 @@
+/*
+ * LLM 智能增强系统实现
+ *
+ * 本文件实现了基于规则的智能建议系统
+ * 每个规则都有专门的处理器,提供 4 级修复策略:
+ * 1. 快速修复 - 最小改动解决问题
+ * 2. 推荐方案 - 使用现代 C++ 特性
+ * 3. 最佳实践 - 遵循行业标准
+ * 4. 设计模式 - 架构级优化
+ */
+
 #include "llm/llm_enhancer.h"
 #include <sstream>
 
 namespace cpp_review {
 
 // ============================================================================
-// RuleBasedProvider Implementation
+// RuleBasedProvider 实现 - 基于规则的智能提供者
 // ============================================================================
 
+/**
+ * 生成智能建议的主入口
+ * 根据规则 ID 路由到专门的处理器
+ */
 std::string RuleBasedProvider::generateSuggestion(const Issue& issue, const std::string& code_context) {
-    // Route to specific handlers based on rule ID
+    // 根据规则 ID 路由到专门的处理器
     if (issue.rule_id == "NULL-PTR-001") {
         return generateNullPointerSuggestion(issue);
     } else if (issue.rule_id == "MEMORY-LEAK-001") {
@@ -25,6 +40,7 @@ std::string RuleBasedProvider::generateSuggestion(const Issue& issue, const std:
         return generateLoopCopySuggestion(issue);
     }
 
+    // 对于未知规则,返回通用建议
     return generateGenericSuggestion(issue);
 }
 
@@ -335,11 +351,19 @@ std::string OpenAIProvider::generateSuggestion(const Issue& issue, const std::st
     return ss.str();
 }
 
+/**
+ * 检查 OpenAI 提供者是否可用
+ * 要求配置了有效的 API 密钥
+ */
 bool OpenAIProvider::isAvailable() const {
-    // Check if API key is set
+    // 检查是否设置了 API 密钥
     return !api_key_.empty() && api_key_ != "none";
 }
 
+/**
+ * 构建发送给 OpenAI 的提示词
+ * 包含问题详情、严重性、代码上下文等
+ */
 std::string OpenAIProvider::buildPrompt(const Issue& issue, const std::string& code_context) {
     std::stringstream ss;
     ss << "You are a C++ code review expert. Analyze this issue and provide a detailed fix:\n\n";
@@ -367,20 +391,24 @@ std::string OpenAIProvider::buildPrompt(const Issue& issue, const std::string& c
 }
 
 // ============================================================================
-// LLMEnhancer Implementation
+// LLMEnhancer 实现 - LLM 增强器
 // ============================================================================
 
 LLMEnhancer::LLMEnhancer(std::shared_ptr<LLMProvider> provider)
     : provider_(std::move(provider)) {}
 
+/**
+ * 使用 LLM 生成的建议增强单个问题
+ * 将 AI 建议追加到原有建议后面
+ */
 Issue LLMEnhancer::enhanceIssue(const Issue& issue, const std::string& code_context) {
     Issue enhanced = issue;
 
     if (isEnabled()) {
-        // Generate AI-enhanced suggestion
+        // 生成 AI 增强的建议
         std::string ai_suggestion = provider_->generateSuggestion(issue, code_context);
 
-        // Append to existing suggestion
+        // 追加到现有建议后
         if (!enhanced.suggestion.empty()) {
             enhanced.suggestion += "\n\n" + std::string(70, '=') + "\n";
         }
@@ -390,29 +418,42 @@ Issue LLMEnhancer::enhanceIssue(const Issue& issue, const std::string& code_cont
     return enhanced;
 }
 
+/**
+ * 增强报告器中的所有问题
+ * 当前为占位符实现
+ */
 void LLMEnhancer::enhanceAllIssues(Reporter& reporter) {
     if (!isEnabled()) {
         return;
     }
 
-    // This would require Reporter to expose a way to modify issues
-    // For now, this is a placeholder
+    // 需要 Reporter 提供修改问题的接口
+    // 当前为占位符
 }
 
 // ============================================================================
-// LLMProviderFactory Implementation
+// LLMProviderFactory 实现 - 提供者工厂
 // ============================================================================
 
+/**
+ * 创建指定类型的 LLM 提供者
+ * @param type 提供者类型 (基于规则/OpenAI/无)
+ * @param config 配置字符串 (如 API 密钥)
+ * @return LLM 提供者的共享指针
+ */
 std::shared_ptr<LLMProvider> LLMProviderFactory::create(ProviderType type, const std::string& config) {
     switch (type) {
         case ProviderType::RULE_BASED:
+            // 创建基于规则的提供者 (内置,无需配置)
             return std::make_shared<RuleBasedProvider>();
 
         case ProviderType::OPENAI:
+            // 创建 OpenAI 提供者 (需要 API 密钥)
             return std::make_shared<OpenAIProvider>(config);
 
         case ProviderType::NONE:
         default:
+            // 禁用 LLM 功能
             return nullptr;
     }
 }
