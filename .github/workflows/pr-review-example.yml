@@ -1,0 +1,66 @@
+name: C++ Code Review
+
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+    paths:
+      - '**.cpp'
+      - '**.cc'
+      - '**.cxx'
+      - '**.h'
+      - '**.hpp'
+      - '**.hxx'
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # 获取完整历史以便进行差异比较
+
+    - name: Setup C++ environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake llvm-14 clang-14 libclang-14-dev
+
+    - name: Build C++ Code Review Agent
+      run: |
+        mkdir -p build
+        cd build
+        cmake ..
+        make -j$(nproc)
+
+    - name: Run PR Review
+      id: review
+      run: |
+        ./build/cpp-agent --pr --pr-comment=pr-review.md --std=c++17 || true
+        echo "EXIT_CODE=$?" >> $GITHUB_OUTPUT
+
+    - name: Post PR Comment
+      if: always() && steps.review.outputs.EXIT_CODE != ''
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          const fs = require('fs');
+          const commentFile = 'pr-review.md';
+
+          if (fs.existsSync(commentFile)) {
+            const comment = fs.readFileSync(commentFile, 'utf8');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.name,
+              body: comment
+            });
+          }
+
+    - name: Fail if critical issues found
+      if: steps.review.outputs.EXIT_CODE == '2'
+      run: |
+        echo "::error::Critical issues found in code review"
+        exit 1
