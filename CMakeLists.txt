@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(cpp-code-review VERSION 1.5.0)
+project(cpp-code-review VERSION 2.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -32,6 +32,9 @@ set(SOURCES
     src/rules/memory_leak_rule.cpp
     src/rules/smart_pointer_rule.cpp
     src/rules/loop_copy_rule.cpp
+    src/rules/integer_overflow_rule.cpp
+    src/rules/use_after_free_rule.cpp
+    src/rules/buffer_overflow_rule.cpp
     src/report/reporter.cpp
     src/report/html_reporter.cpp
     src/config/config.cpp

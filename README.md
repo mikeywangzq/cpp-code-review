@@ -5,7 +5,7 @@
 ### 基于 Clang/LLVM AST 的专业级静态分析工具
 
 <p align="center">
-  <img src="https://img.shields.io/badge/版本-1.5.0-brightgreen?style=for-the-badge&logo=semantic-release" alt="Version"/>
+  <img src="https://img.shields.io/badge/版本-2.0.0-brightgreen?style=for-the-badge&logo=semantic-release" alt="Version"/>
   <img src="https://img.shields.io/badge/C++-17-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" alt="C++17"/>
   <img src="https://img.shields.io/badge/Powered_by-Clang_LLVM-262D3A?style=for-the-badge&logo=llvm" alt="Clang"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"/>
@@ -90,9 +90,9 @@
 ## ⭐ 核心特性
 
 <div align="center">
-<h3>🔥 V1.5 增强版 - 七大检测引擎</h3>
+<h3>🔥 V2.0 智能化 - 十大检测引擎</h3>
 <p><em>基于 AST 的深度语义分析,零正则表达式依赖</em></p>
-<p><sub>V1.0: Bug检测 + 安全扫描 | V1.5 NEW: 性能优化分析 + HTML报告 + 配置文件</sub></p>
+<p><sub>V1.0: Bug检测 + 安全扫描 | V1.5: 性能优化 + HTML报告 | V2.0 NEW: 高级安全分析</sub></p>
 </div>
 
 <table>
@@ -346,6 +346,9 @@ sudo dnf install -y gcc-c++ cmake llvm-devel clang-devel
 # 🆕 V1.5 性能分析示例 (内存泄漏、智能指针、循环优化)
 ./cpp-agent scan examples/v1.5_features.cpp --html
 
+# 🔥 V2.0 高级安全示例 (整数溢出、Use-After-Free、缓冲区溢出)
+./cpp-agent scan examples/v2.0_features.cpp --html
+
 # 🚀 分析真实项目并生成 HTML 报告
 ./cpp-agent scan /path/to/your/project --std=c++17 --html-output=my_report.html
 ```
@@ -355,8 +358,8 @@ sudo dnf install -y gcc-c++ cmake llvm-devel clang-devel
 ## 📝 检测规则
 
 <div align="center">
-<h3>🔍 七大核心规则 · 全方位代码守护</h3>
-<p><sub>V1.0: 4条基础规则 | V1.5 NEW: +3条性能优化规则</sub></p>
+<h3>🔍 十大核心规则 · 全方位代码守护</h3>
+<p><sub>V1.0: 4条基础规则 | V1.5: +3条性能优化 | V2.0 NEW: +3条高级安全</sub></p>
 </div>
 
 ### 📊 规则总览
@@ -412,6 +415,24 @@ sudo dnf install -y gcc-c++ cmake llvm-devel clang-devel
 <td>🔄 循环拷贝优化 <span style="color: #28a745;">V1.5</span></td>
 <td><img src="https://img.shields.io/badge/-MEDIUM-yellow?style=flat-square"/></td>
 <td>识别循环中的昂贵拷贝操作</td>
+</tr>
+<tr style="background-color: #fff3cd;">
+<td><code>INTEGER-OVERFLOW-001</code></td>
+<td>🔢 整数溢出检测 <span style="color: #0066cc;">V2.0</span></td>
+<td><img src="https://img.shields.io/badge/-HIGH-orange?style=flat-square"/></td>
+<td>检测算术运算和类型转换中的溢出</td>
+</tr>
+<tr style="background-color: #fff3cd;">
+<td><code>USE-AFTER-FREE-001</code></td>
+<td>🕵️ Use-After-Free 检测 <span style="color: #0066cc;">V2.0</span></td>
+<td><img src="https://img.shields.io/badge/-CRITICAL-red?style=flat-square"/></td>
+<td>检测 delete 后继续使用指针</td>
+</tr>
+<tr style="background-color: #fff3cd;">
+<td><code>BUFFER-OVERFLOW-001</code></td>
+<td>💥 缓冲区溢出检测 <span style="color: #0066cc;">V2.0</span></td>
+<td><img src="https://img.shields.io/badge/-CRITICAL-red?style=flat-square"/></td>
+<td>检测数组越界访问</td>
 </tr>
 </tbody>
 </table>
@@ -563,7 +584,7 @@ std::getline(std::cin, input);
 待分析文件:
   - examples/test_code.cpp
 
-🔍 已注册 7 条分析规则 (V1.5)
+🔍 已注册 10 条分析规则 (V2.0)
 ⚡ 正在分析...
 
 ╔══════════════════════════════════════════════════════════════════════╗
@@ -738,21 +759,27 @@ std::getline(std::cin, input);
 </td>
 <td width="33%" valign="top">
 
-### 🎯 V2.0 智能化
-<sub>6 月后</sub>
+### ✅ V2.0 智能化
+<sub>当前版本</sub>
 
-**AI 赋能**
+**高级安全分析**
+- [x] 🔢 整数溢出检测
+- [x] 🕵️ Use-After-Free 检测
+- [x] 💥 缓冲区溢出检测
+
+**未来计划**
 - [ ] 🤖 LLM 智能建议
 - [ ] 🔮 代码修复方案
-
-**生态集成**
 - [ ] 🎨 VS Code 插件
 - [ ] 🔄 CI/CD 集成
 - [ ] 🐙 GitHub Actions
+- [ ] 🔬 数据流污点分析
 
-**高级分析**
-- [ ] 🕵️ 污点分析
-- [ ] 🔢 整数溢出检测
+<br>
+
+<div align="center">
+<img src="https://img.shields.io/badge/状态-已发布-brightgreen?style=for-the-badge"/>
+</div>
 
 </td>
 </tr>

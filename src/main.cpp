@@ -8,6 +8,9 @@
 #include "rules/memory_leak_rule.h"
 #include "rules/smart_pointer_rule.h"
 #include "rules/loop_copy_rule.h"
+#include "rules/integer_overflow_rule.h"
+#include "rules/use_after_free_rule.h"
+#include "rules/buffer_overflow_rule.h"
 #include "report/reporter.h"
 #include "report/html_reporter.h"
 #include "config/config.h"
@@ -59,7 +62,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "╔══════════════════════════════════════════════════════════════════════╗\n";
-    std::cout << "║      C++ Code Review Agent V1.5 - Starting Analysis             ║\n";
+    std::cout << "║      C++ Code Review Agent V2.0 - Starting Analysis             ║\n";
     std::cout << "╚══════════════════════════════════════════════════════════════════════╝\n";
     std::cout << "\n";
     std::cout << "Configuration:\n";
@@ -103,7 +106,18 @@ int main(int argc, char* argv[]) {
         engine.registerRule(std::make_unique<LoopCopyRule>());
     }
 
-    std::cout << "Registered " << engine.getRuleCount() << " analysis rules\n";
+    // V2.0 Rules (Advanced Security)
+    if (config.disabled_rules.find("INTEGER-OVERFLOW-001") == config.disabled_rules.end()) {
+        engine.registerRule(std::make_unique<IntegerOverflowRule>());
+    }
+    if (config.disabled_rules.find("USE-AFTER-FREE-001") == config.disabled_rules.end()) {
+        engine.registerRule(std::make_unique<UseAfterFreeRule>());
+    }
+    if (config.disabled_rules.find("BUFFER-OVERFLOW-001") == config.disabled_rules.end()) {
+        engine.registerRule(std::make_unique<BufferOverflowRule>());
+    }
+
+    std::cout << "Registered " << engine.getRuleCount() << " analysis rules (V2.0)\n";
     std::cout << "\n";
     std::cout << "Analyzing...\n";
 

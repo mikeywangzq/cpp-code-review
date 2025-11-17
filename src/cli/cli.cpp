@@ -86,7 +86,7 @@ CLIOptions CLI::parseArguments(int argc, char* argv[]) {
 void CLI::printHelp() {
     std::cout << R"(
 C++ Code Review Agent - Static Analysis Tool
-Version 1.5.0
+Version 2.0.0
 
 USAGE:
     cpp-agent scan <path> [options]
@@ -122,17 +122,22 @@ EXAMPLES:
     # Direct file analysis
     cpp-agent main.cpp --std=c++17
 
-DETECTED ISSUES (V1.5):
-    Bug Detection:
+DETECTED ISSUES (V2.0):
+    Bug Detection (V1.0):
     - Null pointer dereferences
     - Uninitialized variables
     - Assignment in conditional expressions (if (a = b))
     - Unsafe C-style functions (strcpy, sprintf, etc.)
 
-    Performance (V1.5 NEW):
+    Performance Analysis (V1.5):
     - Memory leaks (new/delete mismatch)
     - Smart pointer suggestions
     - Expensive copy operations in loops
+
+    Advanced Security (V2.0 NEW):
+    - Integer overflow detection
+    - Use-after-free detection
+    - Buffer overflow detection
 
 CONFIGURATION:
     Place a .cpp-agent.yml file in your project root to configure:
@@ -145,9 +150,10 @@ For more information, visit: https://github.com/yourusername/cpp-code-review
 }
 
 void CLI::printVersion() {
-    std::cout << "C++ Code Review Agent v1.5.0\n";
+    std::cout << "C++ Code Review Agent v2.0.0\n";
     std::cout << "Built with Clang/LLVM AST analysis\n";
-    std::cout << "New in v1.5: Memory leak detection, Smart pointer suggestions, Loop optimization\n";
+    std::cout << "New in v2.0: Integer overflow, Use-after-free, Buffer overflow detection\n";
+    std::cout << "v1.5 features: Memory leak detection, Smart pointers, Loop optimization\n";
 }
 
 } // namespace cpp_review
