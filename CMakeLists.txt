@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(cpp-code-review VERSION 1.0.0)
+project(cpp-code-review VERSION 1.5.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,7 +29,12 @@ set(SOURCES
     src/rules/uninitialized_var_rule.cpp
     src/rules/assignment_in_condition_rule.cpp
     src/rules/unsafe_c_functions_rule.cpp
+    src/rules/memory_leak_rule.cpp
+    src/rules/smart_pointer_rule.cpp
+    src/rules/loop_copy_rule.cpp
     src/report/reporter.cpp
+    src/report/html_reporter.cpp
+    src/config/config.cpp
     src/cli/cli.cpp
 )
 

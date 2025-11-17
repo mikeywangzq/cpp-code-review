@@ -31,12 +31,13 @@ public:
     void generateReport(std::ostream& out) const;
     size_t getIssueCount() const { return issues_.size(); }
     size_t getCriticalCount() const;
-
-private:
-    std::vector<Issue> issues_;
+    const std::vector<Issue>& getIssues() const { return issues_; }
 
     std::string severityToString(Severity severity) const;
     std::string getSeverityColor(Severity severity) const;
+
+private:
+    std::vector<Issue> issues_;
 };
 
 } // namespace cpp_review

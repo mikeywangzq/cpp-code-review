@@ -5,7 +5,7 @@
 ### 基于 Clang/LLVM AST 的专业级静态分析工具
 
 <p align="center">
-  <img src="https://img.shields.io/badge/版本-1.0.0%20MVP-brightgreen?style=for-the-badge&logo=semantic-release" alt="Version"/>
+  <img src="https://img.shields.io/badge/版本-1.5.0-brightgreen?style=for-the-badge&logo=semantic-release" alt="Version"/>
   <img src="https://img.shields.io/badge/C++-17-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" alt="C++17"/>
   <img src="https://img.shields.io/badge/Powered_by-Clang_LLVM-262D3A?style=for-the-badge&logo=llvm" alt="Clang"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"/>
@@ -90,8 +90,9 @@
 ## ⭐ 核心特性
 
 <div align="center">
-<h3>🔥 V1.0 MVP - 四大核心检测引擎</h3>
+<h3>🔥 V1.5 增强版 - 七大检测引擎</h3>
 <p><em>基于 AST 的深度语义分析,零正则表达式依赖</em></p>
+<p><sub>V1.0: Bug检测 + 安全扫描 | V1.5 NEW: 性能优化分析 + HTML报告 + 配置文件</sub></p>
 </div>
 
 <table>
@@ -321,6 +322,16 @@ sudo dnf install -y gcc-c++ cmake llvm-devel clang-devel
 <td>显示版本信息</td>
 <td><code>cpp-agent --version</code></td>
 </tr>
+<tr style="background-color: #e7f3ff;">
+<td><code>--html</code></td>
+<td>生成 HTML 报告 <span style="color: #28a745;">V1.5</span></td>
+<td><code>cpp-agent scan main.cpp --html</code></td>
+</tr>
+<tr style="background-color: #e7f3ff;">
+<td><code>--html-output=&lt;文件&gt;</code></td>
+<td>指定 HTML 输出文件 <span style="color: #28a745;">V1.5</span></td>
+<td><code>--html-output=report.html</code></td>
+</tr>
 </table>
 
 ### 🎯 实战示例
@@ -332,8 +343,11 @@ sudo dnf install -y gcc-c++ cmake llvm-devel clang-devel
 # ✅ 查看最佳实践 (应该零警告)
 ./cpp-agent scan examples/good_code.cpp
 
-# 🚀 分析真实项目
-./cpp-agent scan /path/to/your/project --std=c++17
+# 🆕 V1.5 性能分析示例 (内存泄漏、智能指针、循环优化)
+./cpp-agent scan examples/v1.5_features.cpp --html
+
+# 🚀 分析真实项目并生成 HTML 报告
+./cpp-agent scan /path/to/your/project --std=c++17 --html-output=my_report.html
 ```
 
 <br>
@@ -341,7 +355,8 @@ sudo dnf install -y gcc-c++ cmake llvm-devel clang-devel
 ## 📝 检测规则
 
 <div align="center">
-<h3>🔍 四大核心规则 · 全方位代码守护</h3>
+<h3>🔍 七大核心规则 · 全方位代码守护</h3>
+<p><sub>V1.0: 4条基础规则 | V1.5 NEW: +3条性能优化规则</sub></p>
 </div>
 
 ### 📊 规则总览
@@ -379,6 +394,24 @@ sudo dnf install -y gcc-c++ cmake llvm-devel clang-devel
 <td>💣 不安全 C 函数</td>
 <td><img src="https://img.shields.io/badge/-CRITICAL-red?style=flat-square"/></td>
 <td>标记危险的 C 风格函数调用</td>
+</tr>
+<tr style="background-color: #e7f3ff;">
+<td><code>MEMORY-LEAK-001</code></td>
+<td>🧠 内存泄漏检测 <span style="color: #28a745;">V1.5</span></td>
+<td><img src="https://img.shields.io/badge/-HIGH-orange?style=flat-square"/></td>
+<td>检测 new/delete 不匹配的内存泄漏</td>
+</tr>
+<tr style="background-color: #e7f3ff;">
+<td><code>SMART-PTR-001</code></td>
+<td>💡 智能指针建议 <span style="color: #28a745;">V1.5</span></td>
+<td><img src="https://img.shields.io/badge/-SUGGESTION-green?style=flat-square"/></td>
+<td>建议使用智能指针替代裸指针</td>
+</tr>
+<tr style="background-color: #e7f3ff;">
+<td><code>LOOP-COPY-001</code></td>
+<td>🔄 循环拷贝优化 <span style="color: #28a745;">V1.5</span></td>
+<td><img src="https://img.shields.io/badge/-MEDIUM-yellow?style=flat-square"/></td>
+<td>识别循环中的昂贵拷贝操作</td>
 </tr>
 </tbody>
 </table>
@@ -530,7 +563,7 @@ std::getline(std::cin, input);
 待分析文件:
   - examples/test_code.cpp
 
-🔍 已注册 4 条分析规则
+🔍 已注册 7 条分析规则 (V1.5)
 ⚡ 正在分析...
 
 ╔══════════════════════════════════════════════════════════════════════╗
@@ -680,21 +713,27 @@ std::getline(std::cin, input);
 </td>
 <td width="33%" valign="top">
 
-### 🚧 V1.5 增强版
-<sub>2-3 月后</sub>
+### ✅ V1.5 增强版
+<sub>当前版本</sub>
 
 **性能分析**
-- [ ] 🧠 内存泄漏检测
-- [ ] 💡 智能指针建议
-- [ ] 🔄 循环优化检测
+- [x] 🧠 内存泄漏检测
+- [x] 💡 智能指针建议
+- [x] 🔄 循环优化检测
 
 **Git 集成**
 - [ ] 📊 增量分析
 - [ ] 🔀 PR 自动审查
 
 **功能增强**
-- [ ] 📄 HTML 报告
-- [ ] ⚙️ 配置文件支持
+- [x] 📄 HTML 报告
+- [x] ⚙️ 配置文件支持
+
+<br>
+
+<div align="center">
+<img src="https://img.shields.io/badge/状态-已发布-brightgreen?style=for-the-badge"/>
+</div>
 
 </td>
 <td width="33%" valign="top">

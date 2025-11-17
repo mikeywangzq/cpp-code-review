@@ -10,6 +10,8 @@ struct CLIOptions {
     std::string cpp_standard = "c++17";
     bool help = false;
     bool version = false;
+    bool generate_html = false;
+    std::string html_output = "report.html";
 };
 
 class CLI {

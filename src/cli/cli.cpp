@@ -39,6 +39,17 @@ CLIOptions CLI::parseArguments(int argc, char* argv[]) {
         else if (arg.find("--std=") == 0) {
             options.cpp_standard = arg.substr(6);
         }
+        else if (arg == "--html" || arg == "--generate-html") {
+            options.generate_html = true;
+        }
+        else if (arg == "--html-output" && i + 1 < argc) {
+            options.html_output = argv[++i];
+            options.generate_html = true;
+        }
+        else if (arg.find("--html-output=") == 0) {
+            options.html_output = arg.substr(14);
+            options.generate_html = true;
+        }
         else if (arg == "scan" && i + 1 < argc) {
             // Next argument should be the path
             ++i;
@@ -75,7 +86,7 @@ CLIOptions CLI::parseArguments(int argc, char* argv[]) {
 void CLI::printHelp() {
     std::cout << R"(
 C++ Code Review Agent - Static Analysis Tool
-Version 1.0.0
+Version 1.5.0
 
 USAGE:
     cpp-agent scan <path> [options]
@@ -85,10 +96,12 @@ COMMANDS:
     scan <path>         Scan a C++ file or directory
 
 OPTIONS:
-    --std=<standard>    Specify C++ standard (default: c++17)
-                        Examples: c++11, c++14, c++17, c++20
-    -h, --help          Display this help message
-    -v, --version       Display version information
+    --std=<standard>        Specify C++ standard (default: c++17)
+                            Examples: c++11, c++14, c++17, c++20
+    --html                  Generate HTML report
+    --html-output=<file>    HTML report output file (default: report.html)
+    -h, --help              Display this help message
+    -v, --version           Display version information
 
 EXAMPLES:
     # Scan a single file
@@ -97,25 +110,44 @@ EXAMPLES:
     # Scan an entire directory
     cpp-agent scan /path/to/project
 
+    # Generate HTML report
+    cpp-agent scan main.cpp --html
+
+    # Specify custom HTML output
+    cpp-agent scan main.cpp --html-output=my_report.html
+
     # Specify C++ standard
     cpp-agent scan main.cpp --std=c++20
 
     # Direct file analysis
     cpp-agent main.cpp --std=c++17
 
-DETECTED ISSUES:
+DETECTED ISSUES (V1.5):
+    Bug Detection:
     - Null pointer dereferences
     - Uninitialized variables
     - Assignment in conditional expressions (if (a = b))
     - Unsafe C-style functions (strcpy, sprintf, etc.)
+
+    Performance (V1.5 NEW):
+    - Memory leaks (new/delete mismatch)
+    - Smart pointer suggestions
+    - Expensive copy operations in loops
+
+CONFIGURATION:
+    Place a .cpp-agent.yml file in your project root to configure:
+    - disabled_rules: [RULE-ID-001, RULE-ID-002]
+    - html_output: true
+    - cpp_standard: c++20
 
 For more information, visit: https://github.com/yourusername/cpp-code-review
 )";
 }
 
 void CLI::printVersion() {
-    std::cout << "C++ Code Review Agent v1.0.0\n";
+    std::cout << "C++ Code Review Agent v1.5.0\n";
     std::cout << "Built with Clang/LLVM AST analysis\n";
+    std::cout << "New in v1.5: Memory leak detection, Smart pointer suggestions, Loop optimization\n";
 }
 
 } // namespace cpp_review
