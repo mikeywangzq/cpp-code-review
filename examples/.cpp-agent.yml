@@ -1,0 +1,36 @@
+# C++ Code Review Agent 配置文件示例
+# 将此文件复制到项目根目录并重命名为 .cpp-agent.yml
+
+# C++ 标准版本 (c++11, c++14, c++17, c++20)
+cpp_standard: c++17
+
+# 是否生成 HTML 报告
+html_output: true
+
+# HTML 报告输出文件名
+html_output_file: code_review_report.html
+
+# 详细输出模式
+verbose: false
+
+# 禁用特定规则 (在括号中列出规则 ID,用逗号分隔)
+# 可用规则 ID:
+#   - NULL-PTR-001        : 空指针解引用检测
+#   - UNINIT-VAR-001      : 未初始化变量检测
+#   - ASSIGN-COND-001     : 条件语句中的赋值检测
+#   - UNSAFE-C-FUNC-001   : 不安全的 C 函数检测
+#   - MEMORY-LEAK-001     : 内存泄漏检测 (V1.5)
+#   - SMART-PTR-001       : 智能指针建议 (V1.5)
+#   - LOOP-COPY-001       : 循环拷贝优化 (V1.5)
+disabled_rules: []
+
+# 示例: 禁用某些规则
+# disabled_rules: [SMART-PTR-001, LOOP-COPY-001]
+
+# 示例: 只关注严重的问题,禁用建议类规则
+# disabled_rules: [SMART-PTR-001]
+
+# 自定义规则严重程度 (可选,高级功能)
+# severity_NULL-PTR-001: CRITICAL
+# severity_MEMORY-LEAK-001: HIGH
+# severity_LOOP-COPY-001: MEDIUM
