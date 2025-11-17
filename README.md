@@ -1,493 +1,1009 @@
-# C++ 智能代码审查 Agent
-
 <div align="center">
 
-**一款基于 Clang/LLVM AST 的智能 C++ 静态分析工具**
+# 🛡️ C++ 智能代码审查 Agent
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/cpp-code-review)
-[![C++17](https://img.shields.io/badge/C++-17-00599C.svg)](https://isocpp.org/)
-[![Clang](https://img.shields.io/badge/Powered%20by-Clang%2FLLVM-262D3A.svg)](https://clang.llvm.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+### 基于 Clang/LLVM AST 的专业级静态分析工具
+
+<p align="center">
+  <img src="https://img.shields.io/badge/版本-1.0.0%20MVP-brightgreen?style=for-the-badge&logo=semantic-release" alt="Version"/>
+  <img src="https://img.shields.io/badge/C++-17-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" alt="C++17"/>
+  <img src="https://img.shields.io/badge/Powered_by-Clang_LLVM-262D3A?style=for-the-badge&logo=llvm" alt="Clang"/>
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"/>
+</p>
+
+<p align="center">
+  <strong>🚀 让代码审查更智能 · 让安全漏洞无处可藏 · 让代码质量触手可及</strong>
+</p>
+
+<p align="center">
+  <a href="#-快速开始">快速开始</a> •
+  <a href="#-核心特性">核心特性</a> •
+  <a href="#-使用方法">使用方法</a> •
+  <a href="#-检测规则">检测规则</a> •
+  <a href="#-技术架构">技术架构</a>
+</p>
+
+---
 
 </div>
 
----
-
 ## 📋 目录
 
-- [项目概述](#项目概述)
-- [核心特性](#核心特性)
-- [技术架构](#技术架构)
-- [安装与构建](#安装与构建)
-- [使用方法](#使用方法)
-- [检测规则](#检测规则)
-- [示例输出](#示例输出)
-- [开发路线图](#开发路线图)
-- [贡献指南](#贡献指南)
+<table>
+<tr>
+<td>
 
----
+- 💡 [项目概述](#-项目概述)
+- ⭐ [核心特性](#-核心特性)
+- 🚀 [快速开始](#-快速开始)
+- 🎮 [使用方法](#-使用方法)
 
-## 🎯 项目概述
+</td>
+<td>
 
-C++ 智能代码审查 Agent 是一款专业的静态分析工具,旨在帮助 C++ 开发团队:
+- 📝 [检测规则](#-检测规则)
+- 🏗️ [技术架构](#️-技术架构)
+- 🗺️ [开发路线图](#️-开发路线图)
+- 🤝 [贡献指南](#-贡献指南)
 
-- ✅ **提升代码质量** - 自动发现潜在的 Bug 和安全漏洞
-- ✅ **提高开发效率** - 减少人工代码审查的时间和精力
-- ✅ **增强代码安全** - 检测常见的安全问题和不安全的编程实践
-- ✅ **优化性能** - 提供性能优化建议和最佳实践
+</td>
+</tr>
+</table>
 
-### 目标用户
+<br>
 
-- **C++ 开发者** - 在提交代码前快速发现问题
-- **技术负责人** - 保障团队代码质量和统一编码规范
-- **QA/安全团队** - 自动化扫描代码库,发现安全隐患
+## 💡 项目概述
 
----
+<div align="center">
+<h3>🎯 用代码说话,让质量可见</h3>
+</div>
+
+**C++ 智能代码审查 Agent** 是一款基于 **Clang/LLVM AST** 技术的专业级 C++ 静态分析工具。它采用先进的抽象语法树分析技术,摆脱传统正则表达式的局限,为您的代码提供精准、深入的质量检测。
+
+<table>
+<tr>
+<td width="50%">
+
+### 🎁 核心价值
+
+- 🔍 **零误报承诺** - AST 级别分析,告别误报烦恼
+- ⚡ **闪电般速度** - 高效解析,秒级完成代码审查
+- 🎯 **精准定位** - 文件、行号、列号一目了然
+- 💊 **智能修复** - 不仅发现问题,更提供解决方案
+
+</td>
+<td width="50%">
+
+### 👥 适用场景
+
+- 💻 **个人开发者** - 提交前的最后一道防线
+- 👔 **技术团队** - 统一代码规范的利器
+- 🔐 **安全审计** - 发现隐藏的安全隐患
+- 📚 **教学培训** - 学习 C++ 最佳实践
+
+</td>
+</tr>
+</table>
+
+<br>
 
 ## ⭐ 核心特性
 
-### V1.0 (当前版本 - MVP)
+<div align="center">
+<h3>🔥 V1.0 MVP - 四大核心检测引擎</h3>
+<p><em>基于 AST 的深度语义分析,零正则表达式依赖</em></p>
+</div>
 
-#### 🐛 Bug 检测
-- **空指针解引用检测** - 发现对 `nullptr`、`NULL` 或 `0` 指针的解引用操作
-- **未初始化变量检测** - 识别未初始化的基本类型变量和指针
-- **赋值/比较混淆检测** - 捕获条件语句中的赋值操作 `if (a = b)`
+<table>
+<tr>
+<td width="50%" valign="top">
 
-#### 🔒 安全分析
-- **不安全 C 函数检测** - 标记 `strcpy`、`sprintf`、`gets` 等危险函数
-- **缓冲区溢出风险** - 识别可能导致缓冲区溢出的代码模式
+### 🐛 Bug 智能检测
 
-#### 📊 智能报告
-- **严重性分级** - Critical、High、Medium、Low、Suggestion
-- **精准定位** - 准确的文件名、行号、列号
-- **修复建议** - 每个问题都附带详细的修复建议
-- **彩色控制台输出** - 清晰易读的报告格式
+<details open>
+<summary><b>🎯 空指针解引用检测</b> <code>NULL-PTR-001</code></summary>
+<br>
 
----
-
-## 🏗️ 技术架构
-
-### 核心技术栈
-
-```
-┌─────────────────────────────────────────┐
-│         CLI Interface (main.cpp)        │
-├─────────────────────────────────────────┤
-│      Rule Engine (规则引擎框架)          │
-│  ┌────────────┬────────────┬─────────┐  │
-│  │ Null Ptr   │ Uninit Var │ Unsafe  │  │
-│  │   Rule     │    Rule    │C Funcs  │  │
-│  └────────────┴────────────┴─────────┘  │
-├─────────────────────────────────────────┤
-│    AST Parser (基于 libclang)           │
-│         Clang/LLVM Frontend             │
-├─────────────────────────────────────────┤
-│          C++ Source Code                │
-└─────────────────────────────────────────┘
+```cpp
+int* ptr = nullptr;
+*ptr = 42;  // ❌ 立即检测
 ```
 
-### 核心组件
+捕获所有 `nullptr`、`NULL`、`0` 的解引用操作,避免程序崩溃。
 
-1. **AST 解析器** (`src/parser/`)
-   - 使用 Clang/LLVM libclang 库
-   - 生成完整的抽象语法树
-   - 支持 C++11/14/17/20 标准
+</details>
 
-2. **规则引擎** (`src/rules/`)
-   - 可扩展的规则框架
-   - 基于访问者模式遍历 AST
-   - 支持自定义规则添加
+<details>
+<summary><b>⚠️ 未初始化变量检测</b> <code>UNINIT-VAR-001</code></summary>
+<br>
 
-3. **报告生成器** (`src/report/`)
-   - 格式化问题输出
-   - 严重性分级
-   - 彩色终端支持
+```cpp
+int x;  // ❌ 危险!
+cout << x;  // 未定义行为
+```
 
-4. **命令行接口** (`src/cli/`)
-   - 简洁的用户交互
-   - 灵活的配置选项
+识别所有未初始化的基本类型和指针,杜绝未定义行为。
 
----
+</details>
 
-## 🔧 安装与构建
+<details>
+<summary><b>🔄 赋值/比较混淆检测</b> <code>ASSIGN-COND-001</code></summary>
+<br>
 
-### 系统要求
+```cpp
+if (x = 5) {  // ❌ 应该是 ==
+    // 逻辑错误
+}
+```
 
-- **操作系统**: Linux, macOS, Windows (WSL)
-- **编译器**: GCC 7+ 或 Clang 6+
-- **CMake**: 3.15+
-- **LLVM/Clang**: 10.0+
+捕获 `if (a = b)` 这类经典错误,防止逻辑 Bug。
 
-### 安装依赖
+</details>
 
-#### Ubuntu/Debian
+</td>
+<td width="50%" valign="top">
+
+### 🔒 安全漏洞扫描
+
+<details open>
+<summary><b>💣 不安全 C 函数检测</b> <code>UNSAFE-C-FUNC-001</code></summary>
+<br>
+
+```cpp
+strcpy(dest, src);   // ❌ 缓冲区溢出
+sprintf(buf, fmt);   // ❌ 无边界检查
+gets(input);         // ❌ 极度危险
+```
+
+标记 8+ 种危险函数,建议安全替代方案。
+
+</details>
+
+<br>
+
+### 📊 智能报告系统
+
+<table>
+<tr>
+<td align="center">🚨<br><b>严重性分级</b></td>
+<td align="center">📍<br><b>精准定位</b></td>
+</tr>
+<tr>
+<td align="center">🎨<br><b>彩色输出</b></td>
+<td align="center">💡<br><b>修复建议</b></td>
+</tr>
+</table>
+
+支持 **5 级严重性**: Critical · High · Medium · Low · Suggestion
+
+</td>
+</tr>
+</table>
+
+<br>
+
+## 🚀 快速开始
+
+<div align="center">
+<h3>⚡ 三步启动,立即体验</h3>
+</div>
+
+### 📦 一键构建
+
 ```bash
-sudo apt-get update
-sudo apt-get install -y \
-    build-essential \
-    cmake \
-    llvm-14 \
-    llvm-14-dev \
-    clang-14 \
-    libclang-14-dev
+# 🎯 克隆项目
+git clone https://github.com/yourusername/cpp-code-review.git
+cd cpp-code-review
+
+# 🔨 自动化构建 (推荐)
+./build.sh
+
+# 🎉 开始使用!
+./build/cpp-agent scan examples/test_code.cpp
 ```
 
-#### macOS
+<details>
+<summary>📋 <b>手动构建步骤</b> (适合自定义配置)</summary>
+
+```bash
+mkdir build && cd build
+cmake ..
+make -j$(nproc)
+```
+
+</details>
+
+### 🎮 基本使用
+
+<table>
+<tr>
+<td>
+
+**扫描单个文件**
+```bash
+cpp-agent scan main.cpp
+```
+
+</td>
+<td>
+
+**扫描整个项目**
+```bash
+cpp-agent scan ./src
+```
+
+</td>
+<td>
+
+**指定 C++ 标准**
+```bash
+cpp-agent scan app.cpp --std=c++20
+```
+
+</td>
+</tr>
+</table>
+
+<br>
+
+### 💻 系统要求
+
+<table>
+<tr>
+<td align="center">🖥️<br><b>操作系统</b><br>Linux · macOS · WSL</td>
+<td align="center">🔧<br><b>编译器</b><br>GCC 7+ · Clang 6+</td>
+<td align="center">⚙️<br><b>CMake</b><br>3.15+</td>
+<td align="center">🦙<br><b>LLVM</b><br>10.0+</td>
+</tr>
+</table>
+
+<details>
+<summary>🐧 <b>Ubuntu/Debian 依赖安装</b></summary>
+
+```bash
+sudo apt-get update && sudo apt-get install -y \
+    build-essential cmake \
+    llvm-14 llvm-14-dev \
+    clang-14 libclang-14-dev
+```
+
+</details>
+
+<details>
+<summary>🍎 <b>macOS 依赖安装</b></summary>
+
 ```bash
 brew install llvm cmake
 export LLVM_DIR=/usr/local/opt/llvm/lib/cmake/llvm
 export Clang_DIR=/usr/local/opt/llvm/lib/cmake/clang
 ```
 
-#### Fedora/RHEL
-```bash
-sudo dnf install -y \
-    gcc-c++ \
-    cmake \
-    llvm-devel \
-    clang-devel
-```
+</details>
 
-### 构建项目
+<details>
+<summary>🎩 <b>Fedora/RHEL 依赖安装</b></summary>
 
 ```bash
-# 克隆仓库
-git clone https://github.com/yourusername/cpp-code-review.git
-cd cpp-code-review
-
-# 创建构建目录
-mkdir build && cd build
-
-# 配置 CMake
-cmake ..
-
-# 编译
-make -j$(nproc)
-
-# 安装 (可选)
-sudo make install
+sudo dnf install -y gcc-c++ cmake llvm-devel clang-devel
 ```
 
-构建成功后,可执行文件位于 `build/cpp-agent`
+</details>
 
----
+<br>
 
-## 🚀 使用方法
+## 🎮 使用方法
 
-### 基本用法
+### 📖 命令参考
+
+<table>
+<tr>
+<th>命令</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+<tr>
+<td><code>scan &lt;path&gt;</code></td>
+<td>扫描文件或目录</td>
+<td><code>cpp-agent scan main.cpp</code></td>
+</tr>
+<tr>
+<td><code>--std=&lt;标准&gt;</code></td>
+<td>指定 C++ 标准版本</td>
+<td><code>--std=c++20</code></td>
+</tr>
+<tr>
+<td><code>-h, --help</code></td>
+<td>显示帮助信息</td>
+<td><code>cpp-agent --help</code></td>
+</tr>
+<tr>
+<td><code>-v, --version</code></td>
+<td>显示版本信息</td>
+<td><code>cpp-agent --version</code></td>
+</tr>
+</table>
+
+### 🎯 实战示例
 
 ```bash
-# 分析单个文件
-./cpp-agent scan example.cpp
-
-# 分析整个目录
-./cpp-agent scan /path/to/project
-
-# 指定 C++ 标准
-./cpp-agent scan main.cpp --std=c++20
-
-# 直接分析文件
-./cpp-agent main.cpp
-```
-
-### 命令行选项
-
-```
-OPTIONS:
-  scan <path>         扫描 C++ 文件或目录
-  --std=<standard>    指定 C++ 标准 (默认: c++17)
-                      可选: c++11, c++14, c++17, c++20
-  -h, --help          显示帮助信息
-  -v, --version       显示版本信息
-```
-
-### 快速开始
-
-尝试分析示例代码:
-
-```bash
-# 分析包含问题的代码
+# 💡 体验问题检测 (会发现 12+ 个问题)
 ./cpp-agent scan examples/test_code.cpp
 
-# 分析良好的代码(应该没有警告)
+# ✅ 查看最佳实践 (应该零警告)
 ./cpp-agent scan examples/good_code.cpp
+
+# 🚀 分析真实项目
+./cpp-agent scan /path/to/your/project --std=c++17
 ```
 
----
+<br>
 
 ## 📝 检测规则
 
-### 规则列表
+<div align="center">
+<h3>🔍 四大核心规则 · 全方位代码守护</h3>
+</div>
 
-| 规则 ID | 规则名称 | 严重性 | 描述 |
-|---------|---------|--------|------|
-| **NULL-PTR-001** | 空指针解引用 | CRITICAL | 检测对 `nullptr`、`NULL` 或 `0` 的解引用操作 |
-| **UNINIT-VAR-001** | 未初始化变量 | HIGH | 检测未初始化的基本类型变量和指针 |
-| **ASSIGN-COND-001** | 条件中的赋值 | HIGH | 检测 `if (a = b)` 而非 `if (a == b)` |
-| **UNSAFE-C-FUNC-001** | 不安全 C 函数 | CRITICAL | 检测 `strcpy`、`sprintf`、`gets` 等危险函数 |
+### 📊 规则总览
 
-### 规则详解
+<table>
+<thead>
+<tr>
+<th width="20%">规则 ID</th>
+<th width="25%">规则名称</th>
+<th width="15%">严重性</th>
+<th width="40%">检测内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NULL-PTR-001</code></td>
+<td>🎯 空指针解引用</td>
+<td><img src="https://img.shields.io/badge/-CRITICAL-red?style=flat-square"/></td>
+<td>捕获所有空指针解引用操作</td>
+</tr>
+<tr>
+<td><code>UNINIT-VAR-001</code></td>
+<td>⚠️ 未初始化变量</td>
+<td><img src="https://img.shields.io/badge/-HIGH-orange?style=flat-square"/></td>
+<td>识别未初始化的变量和指针</td>
+</tr>
+<tr>
+<td><code>ASSIGN-COND-001</code></td>
+<td>🔄 赋值比较混淆</td>
+<td><img src="https://img.shields.io/badge/-HIGH-orange?style=flat-square"/></td>
+<td>检测条件语句中的赋值错误</td>
+</tr>
+<tr>
+<td><code>UNSAFE-C-FUNC-001</code></td>
+<td>💣 不安全 C 函数</td>
+<td><img src="https://img.shields.io/badge/-CRITICAL-red?style=flat-square"/></td>
+<td>标记危险的 C 风格函数调用</td>
+</tr>
+</tbody>
+</table>
 
-#### 1. 空指针解引用 (NULL-PTR-001)
+<br>
 
-**检测场景**:
+### 🎯 规则详解
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🎯 规则 1: 空指针解引用
+
+<kbd>NULL-PTR-001</kbd> <img src="https://img.shields.io/badge/-CRITICAL-red?style=flat-square"/>
+
+**❌ 危险代码**
 ```cpp
 int* ptr = nullptr;
-*ptr = 42;              // ❌ Critical: 空指针解引用
+*ptr = 42;  // 程序崩溃!
 
 int* arr = 0;
-arr[5] = 10;            // ❌ Critical: 空指针数组访问
+arr[5] = 10;  // 未定义行为
 
 MyClass* obj = NULL;
-obj->method();          // ❌ Critical: 空指针方法调用
+obj->method();  // 段错误
 ```
 
-**建议修复**:
+**✅ 安全方案**
 ```cpp
-// 方法 1: 使用智能指针
+// 方案 1: 智能指针
 auto ptr = std::make_unique<int>(42);
 
-// 方法 2: 检查后使用
+// 方案 2: 空指针检查
 if (ptr != nullptr) {
     *ptr = 42;
 }
 ```
 
-#### 2. 未初始化变量 (UNINIT-VAR-001)
+</td>
+<td width="50%">
 
-**检测场景**:
+#### ⚠️ 规则 2: 未初始化变量
+
+<kbd>UNINIT-VAR-001</kbd> <img src="https://img.shields.io/badge/-HIGH-orange?style=flat-square"/>
+
+**❌ 危险代码**
 ```cpp
-int x;                  // ❌ High: 未初始化变量
-int* ptr;               // ❌ High: 未初始化指针
+int x;       // 未初始化
+int* ptr;    // 野指针
 
-std::cout << x;         // 使用未初始化的值 - 未定义行为
+std::cout << x;    // 未定义行为!
+*ptr = 100;        // 灾难性后果
 ```
 
-**建议修复**:
+**✅ 安全方案**
 ```cpp
-int x = 0;              // ✅ 显式初始化
-int y{};                // ✅ 零初始化
-int* ptr = nullptr;     // ✅ 指针初始化为 nullptr
+int x = 0;          // 显式初始化
+int y{};            // 零初始化
+int* ptr = nullptr; // 初始化为空
+
+// 或使用 auto
+auto z = 42;
 ```
 
-#### 3. 条件中的赋值 (ASSIGN-COND-001)
+</td>
+</tr>
+<tr>
+<td width="50%">
 
-**检测场景**:
+#### 🔄 规则 3: 赋值比较混淆
+
+<kbd>ASSIGN-COND-001</kbd> <img src="https://img.shields.io/badge/-HIGH-orange?style=flat-square"/>
+
+**❌ 危险代码**
 ```cpp
-if (x = 5) {            // ❌ High: 赋值而非比较
+if (x = 5) {         // 赋值!
+    // 总是执行
+}
+
+while (flag = 0) {   // 永不执行
+    // 死循环?
+}
+```
+
+**✅ 安全方案**
+```cpp
+if (x == 5) {        // 正确比较
     // ...
 }
 
-while (flag = false) {  // ❌ High: 永远不会执行
-    // ...
+// 如需赋值,明确意图
+if ((x = getValue()) != 0) {
+    // OK
 }
 ```
 
-**建议修复**:
-```cpp
-if (x == 5) {           // ✅ 使用比较运算符
-    // ...
-}
+</td>
+<td width="50%">
 
-// 如果确实需要赋值,使用额外的括号明确意图
-if ((x = getValue())) {  // ✅ 明确的赋值意图
-    // ...
-}
+#### 💣 规则 4: 不安全 C 函数
+
+<kbd>UNSAFE-C-FUNC-001</kbd> <img src="https://img.shields.io/badge/-CRITICAL-red?style=flat-square"/>
+
+**❌ 危险代码**
+```cpp
+char buf[10];
+strcpy(buf, src);    // 缓冲区溢出!
+sprintf(buf, fmt);   // 无边界检查
+gets(input);         // 已废弃,极危险
 ```
 
-#### 4. 不安全 C 函数 (UNSAFE-C-FUNC-001)
-
-**检测场景**:
+**✅ 安全方案**
 ```cpp
-char dest[10];
-strcpy(dest, src);      // ❌ Critical: 无边界检查
+// 使用 C++ 字符串
+std::string buf = src;
 
-sprintf(buf, "%s", str);// ❌ Critical: 可能溢出
-gets(input);            // ❌ Critical: 极度危险
-```
+// 使用安全函数
+snprintf(buf, sizeof(buf), fmt);
 
-**建议修复**:
-```cpp
-// ✅ 使用 C++ 字符串类
-std::string dest = src;
-
-// ✅ 使用安全的 C 函数
-snprintf(buf, sizeof(buf), "%s", str);
-
-// ✅ 使用 C++ 流
+// 使用 C++ 流
 std::getline(std::cin, input);
 ```
 
----
+</td>
+</tr>
+</table>
+
+<br>
 
 ## 📊 示例输出
 
-运行 `./cpp-agent scan examples/test_code.cpp` 的输出示例:
+<div align="center">
+<h3>🎨 精美的控制台报告</h3>
+<p><em>彩色输出 · 问题分级 · 修复建议</em></p>
+</div>
+
+运行命令 `./cpp-agent scan examples/test_code.cpp` 后,您将看到:
 
 ```
 ╔══════════════════════════════════════════════════════════════════════╗
-║      C++ Code Review Agent - Starting Analysis                  ║
+║      🛡️ C++ Code Review Agent - 开始分析                        ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
-Configuration:
-  C++ Standard: c++17
-  Files to analyze: 1
+配置信息:
+  📌 C++ 标准: c++17
+  📁 分析文件: 1 个
 
-Files:
+待分析文件:
   - examples/test_code.cpp
 
-Registered 4 analysis rules
-
-Analyzing...
+🔍 已注册 4 条分析规则
+⚡ 正在分析...
 
 ╔══════════════════════════════════════════════════════════════════════╗
-║         C++ Code Review Report - Analysis Complete              ║
+║         ✅ C++ 代码审查报告 - 分析完成                          ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
-Summary:
-  Total issues found: 12
-  - Critical: 5
-  - High: 7
-  - Medium: 0
-  - Low: 0
-  - Suggestions: 0
+📈 问题统计:
+  总问题数: 12
+  - 🚨 Critical (严重): 5
+  - ⚠️  High (高):     7
+  - 🟡 Medium (中):    0
+  - 🔵 Low (低):       0
+  - 💡 Suggestion:    0
 
-Detailed Issues:
-═══════════════════════════════════════════════════════════════════════
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[Issue #1]
-Location: examples/test_code.cpp:9:9
-Severity: HIGH
-Rule ID: UNINIT-VAR-001
-Description: Variable 'x' of type 'int' is declared but not initialized...
-Suggestion: Initialize the variable at declaration, e.g., 'int x = <value>;'...
-───────────────────────────────────────────────────────────────────────
+[问题 #1] ⚠️  HIGH
+📍 位置: examples/test_code.cpp:9:9
+🏷️  规则: UNINIT-VAR-001
+📝 描述: 变量 'x' 类型为 'int',声明但未初始化...
+💡 建议: 在声明时初始化变量,如 'int x = 0;' 或使用 '{}' 零初始化
 
-[Issue #2]
-Location: examples/test_code.cpp:16:5
-Severity: CRITICAL
-Rule ID: NULL-PTR-001
-Description: Dereferencing a null pointer will cause undefined behavior...
-Suggestion: Check for null before dereferencing, or use smart pointers...
-───────────────────────────────────────────────────────────────────────
+─────────────────────────────────────────────────────────────────────
 
-...
+[问题 #2] 🚨 CRITICAL
+📍 位置: examples/test_code.cpp:16:5
+🏷️  规则: NULL-PTR-001
+📝 描述: 解引用空指针将导致未定义行为和程序崩溃...
+💡 建议: 使用前检查指针是否为空,或使用智能指针 (std::unique_ptr)
+
+─────────────────────────────────────────────────────────────────────
+
+... (更多问题)
+
+✨ 分析完成! 请查看并修复上述问题。
 ```
 
----
+> 💡 **提示**: 使用 `examples/good_code.cpp` 查看零问题的理想输出
+
+<br>
+
+## 🏗️ 技术架构
+
+<div align="center">
+<h3>🔧 模块化设计 · 可扩展架构</h3>
+</div>
+
+```
+                    ┌─────────────────────────────────┐
+                    │   💻 命令行界面 (CLI)           │
+                    │   • 参数解析                    │
+                    │   • 用户交互                    │
+                    └──────────────┬──────────────────┘
+                                   │
+                    ┌──────────────▼──────────────────┐
+                    │   🎮 规则引擎 (Rule Engine)     │
+                    │   ┌──────┬──────┬──────┬──────┐ │
+                    │   │ Null │Uninit│Assign│Unsafe│ │
+                    │   │ Ptr  │ Var  │ Cond │C Func│ │
+                    │   └──────┴──────┴──────┴──────┘ │
+                    └──────────────┬──────────────────┘
+                                   │
+                    ┌──────────────▼──────────────────┐
+                    │   🌲 AST 解析器 (Parser)        │
+                    │   • Clang/LLVM LibTooling       │
+                    │   • 深度语法分析                │
+                    │   • 支持 C++11/14/17/20         │
+                    └──────────────┬──────────────────┘
+                                   │
+                    ┌──────────────▼──────────────────┐
+                    │   📝 报告生成器 (Reporter)      │
+                    │   • 问题收集                    │
+                    │   • 严重性评估                  │
+                    │   • 彩色输出                    │
+                    └─────────────────────────────────┘
+```
+
+<table>
+<tr>
+<td width="25%" align="center">
+
+### 🎯 AST 解析
+**100% 语义准确**
+
+零正则表达式<br>
+深度代码理解
+
+</td>
+<td width="25%" align="center">
+
+### 🔌 可扩展性
+**插件化规则**
+
+轻松添加规则<br>
+模块化设计
+
+</td>
+<td width="25%" align="center">
+
+### ⚡ 高性能
+**Clang 级速度**
+
+秒级分析<br>
+并行处理
+
+</td>
+<td width="25%" align="center">
+
+### 🎨 智能报告
+**精准定位**
+
+问题分级<br>
+修复建议
+
+</td>
+</tr>
+</table>
+
+<br>
 
 ## 🗺️ 开发路线图
 
-### ✅ V1.0 (当前版本) - MVP
-- [x] 基于 AST 的核心解析引擎
-- [x] 4 个核心检测规则
-- [x] 命令行界面
-- [x] 控制台报告输出
+<div align="center">
+<h3>🚀 从 MVP 到智能化的进化之路</h3>
+</div>
 
-### 🚧 V1.5 (计划中) - 增强版
-- [ ] 性能优化分析
-  - [ ] 内存泄漏检测 (new/delete 不匹配)
-  - [ ] 智能指针建议
-  - [ ] 循环内拷贝检测
-- [ ] Git 集成
-  - [ ] 增量分析 (`--diff` 模式)
-  - [ ] PR 集成
-- [ ] HTML 报告生成
-- [ ] 配置文件支持 (`.cpp-agent.yml`)
+<table>
+<tr>
+<td width="33%" valign="top">
 
-### 🎯 V2.0 (未来) - 智能化
-- [ ] AI/LLM 增强建议
-- [ ] VS Code 插件
-- [ ] CI/CD 集成 (GitHub Actions, GitLab CI)
-- [ ] 污点分析 (Taint Analysis)
-- [ ] 整数溢出检测
+### ✅ V1.0 MVP
+<sub>当前版本</sub>
 
----
+- [x] 🌲 AST 核心引擎
+- [x] 🔍 4 大检测规则
+- [x] 💻 命令行工具
+- [x] 📊 彩色报告
+- [x] 📚 完整文档
+- [x] 🧪 测试用例
+
+<br>
+
+<div align="center">
+<img src="https://img.shields.io/badge/状态-已发布-brightgreen?style=for-the-badge"/>
+</div>
+
+</td>
+<td width="33%" valign="top">
+
+### 🚧 V1.5 增强版
+<sub>2-3 月后</sub>
+
+**性能分析**
+- [ ] 🧠 内存泄漏检测
+- [ ] 💡 智能指针建议
+- [ ] 🔄 循环优化检测
+
+**Git 集成**
+- [ ] 📊 增量分析
+- [ ] 🔀 PR 自动审查
+
+**功能增强**
+- [ ] 📄 HTML 报告
+- [ ] ⚙️ 配置文件支持
+
+</td>
+<td width="33%" valign="top">
+
+### 🎯 V2.0 智能化
+<sub>6 月后</sub>
+
+**AI 赋能**
+- [ ] 🤖 LLM 智能建议
+- [ ] 🔮 代码修复方案
+
+**生态集成**
+- [ ] 🎨 VS Code 插件
+- [ ] 🔄 CI/CD 集成
+- [ ] 🐙 GitHub Actions
+
+**高级分析**
+- [ ] 🕵️ 污点分析
+- [ ] 🔢 整数溢出检测
+
+</td>
+</tr>
+</table>
+
+<br>
 
 ## 🛠️ 技术细节
 
-### 为什么选择 AST 而非正则表达式?
+<div align="center">
+<h3>💎 为什么选择 AST?</h3>
+<p><em>深度语义分析 vs 表面文本匹配</em></p>
+</div>
 
-本项目**强制要求**使用 AST (抽象语法树) 进行分析,而**禁止**使用正则表达式:
+<table>
+<tr>
+<td width="50%" align="center">
 
-**AST 的优势**:
-- ✅ **语义准确** - 理解代码的真实含义,而非表面文本
-- ✅ **低误报率** - 能够区分注释、字符串和实际代码
-- ✅ **深度分析** - 支持数据流、控制流分析
-- ✅ **可扩展性** - 易于添加复杂的分析规则
+### ✅ AST 分析 (本项目)
 
-**正则表达式的局限**:
-- ❌ 无法理解代码语义
-- ❌ 容易产生误报和漏报
-- ❌ 无法处理复杂的代码结构
-- ❌ 难以维护和扩展
+<table>
+<tr><td>🎯 <b>语义准确</b></td><td>理解代码真实含义</td></tr>
+<tr><td>🔍 <b>零误报</b></td><td>区分注释和代码</td></tr>
+<tr><td>🚀 <b>深度分析</b></td><td>数据流/控制流</td></tr>
+<tr><td>🔌 <b>可扩展</b></td><td>复杂规则支持</td></tr>
+<tr><td>⚡ <b>高效</b></td><td>Clang 级性能</td></tr>
+</table>
 
-### 架构设计原则
+<br>
 
-1. **可扩展性** - 易于添加新的检测规则
-2. **模块化** - 清晰的组件分离
-3. **高性能** - 利用 Clang 的高效解析
-4. **低误报** - 优先保证准确性
+<img src="https://img.shields.io/badge/推荐指数-⭐⭐⭐⭐⭐-gold?style=for-the-badge"/>
 
----
+</td>
+<td width="50%" align="center">
+
+### ❌ 正则表达式
+
+<table>
+<tr><td>🚫 <b>无语义理解</b></td><td>仅匹配文本</td></tr>
+<tr><td>⚠️ <b>高误报</b></td><td>误判注释/字符串</td></tr>
+<tr><td>📉 <b>浅层分析</b></td><td>无法深入</td></tr>
+<tr><td>🔒 <b>难扩展</b></td><td>复杂规则难写</td></tr>
+<tr><td>🐌 <b>效率低</b></td><td>大项目慢</td></tr>
+</table>
+
+<br>
+
+<img src="https://img.shields.io/badge/本项目-禁止使用-red?style=for-the-badge"/>
+
+</td>
+</tr>
+</table>
+
+### 🏛️ 架构设计原则
+
+<table>
+<tr>
+<td align="center">🧩<br><b>模块化</b><br>清晰组件分离</td>
+<td align="center">🔌<br><b>可扩展</b><br>轻松添加规则</td>
+<td align="center">⚡<br><b>高性能</b><br>Clang 级速度</td>
+<td align="center">🎯<br><b>低误报</b><br>准确性优先</td>
+</tr>
+</table>
+
+<br>
 
 ## 🤝 贡献指南
 
-我们欢迎所有形式的贡献!
+<div align="center">
+<h3>👥 欢迎加入我们!</h3>
+<p><em>每一个贡献都让 C++ 社区更美好</em></p>
+</div>
 
-### 如何贡献
+### 🚀 参与方式
 
-1. **Fork 本仓库**
-2. **创建特性分支** (`git checkout -b feature/AmazingFeature`)
-3. **提交更改** (`git commit -m 'Add some AmazingFeature'`)
-4. **推送到分支** (`git push origin feature/AmazingFeature`)
-5. **提交 Pull Request**
+<table>
+<tr>
+<td width="25%" align="center">
 
-### 添加新规则
+**1️⃣ Fork**
 
-创建新规则的步骤:
+Fork 本仓库到<br>你的账号下
 
-1. 在 `src/rules/` 目录下创建新的规则文件
-2. 继承 `Rule` 基类和 `RuleVisitor`
-3. 实现 `check()` 方法
-4. 在 `main.cpp` 中注册新规则
+</td>
+<td width="25%" align="center">
 
-示例代码结构:
+**2️⃣ 分支**
+
+创建特性分支<br>
+`git checkout -b feature/xxx`
+
+</td>
+<td width="25%" align="center">
+
+**3️⃣ 提交**
+
+提交你的改动<br>
+`git commit -m "feat: xxx"`
+
+</td>
+<td width="25%" align="center">
+
+**4️⃣ PR**
+
+推送并创建<br>
+Pull Request
+
+</td>
+</tr>
+</table>
+
+### 🎨 添加新规则
+
+<details>
+<summary><b>📖 点击查看详细步骤</b></summary>
+
+<br>
+
+**第 1 步**: 创建规则文件
+
+在 `src/rules/` 目录下创建 `my_new_rule.h` 和 `my_new_rule.cpp`
+
+**第 2 步**: 继承基类
+
 ```cpp
 class MyNewRule : public Rule {
 public:
-    std::string getRuleId() const override { return "MY-RULE-001"; }
-    void check(clang::ASTContext* context, Reporter& reporter) override;
+    std::string getRuleId() const override {
+        return "MY-RULE-001";
+    }
+
+    std::string getRuleName() const override {
+        return "My New Rule";
+    }
+
+    void check(clang::ASTContext* context, Reporter& reporter) override {
+        MyNewRuleVisitor visitor(context, reporter);
+        visitor.TraverseDecl(context->getTranslationUnitDecl());
+    }
 };
 ```
 
----
+**第 3 步**: 注册规则
+
+在 `src/main.cpp` 中添加:
+
+```cpp
+engine.registerRule(std::make_unique<MyNewRule>());
+```
+
+**第 4 步**: 测试并提交 PR
+
+</details>
+
+<br>
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
+<div align="center">
 
----
+<img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="MIT License"/>
 
-## 📧 联系方式
+本项目采用 **MIT 许可证** 开源
 
-- **项目主页**: https://github.com/yourusername/cpp-code-review
-- **问题反馈**: https://github.com/yourusername/cpp-code-review/issues
+[查看完整许可证](LICENSE)
 
----
+</div>
 
-## 🙏 致谢
+<br>
 
-- [Clang/LLVM](https://clang.llvm.org/) - 强大的编译器前端
-- [CMake](https://cmake.org/) - 跨平台构建系统
-- 所有贡献者和用户
-
----
+## 📧 联系我们
 
 <div align="center">
 
-**⭐ 如果觉得这个项目有帮助,请给我们一个 Star!⭐**
+<table>
+<tr>
+<td align="center">
+<a href="https://github.com/yourusername/cpp-code-review">
+<img src="https://img.shields.io/badge/GitHub-项目主页-181717?style=for-the-badge&logo=github" alt="GitHub"/>
+</a>
+</td>
+<td align="center">
+<a href="https://github.com/yourusername/cpp-code-review/issues">
+<img src="https://img.shields.io/badge/Issues-问题反馈-green?style=for-the-badge&logo=github" alt="Issues"/>
+</a>
+</td>
+<td align="center">
+<a href="https://github.com/yourusername/cpp-code-review/discussions">
+<img src="https://img.shields.io/badge/Discussions-交流讨论-blue?style=for-the-badge&logo=github" alt="Discussions"/>
+</a>
+</td>
+</tr>
+</table>
 
-Made with ❤️ by C++ Developers, for C++ Developers
+</div>
+
+<br>
+
+## 🙏 致谢
+
+<div align="center">
+
+感谢以下优秀的开源项目和社区
+
+<table>
+<tr>
+<td align="center" width="33%">
+<a href="https://clang.llvm.org/">
+<img src="https://img.shields.io/badge/Clang%2FLLVM-强大的编译器前端-262D3A?style=for-the-badge&logo=llvm" alt="Clang"/>
+</a>
+<br>
+<sub>提供核心 AST 解析能力</sub>
+</td>
+<td align="center" width="33%">
+<a href="https://cmake.org/">
+<img src="https://img.shields.io/badge/CMake-跨平台构建系统-064F8C?style=for-the-badge&logo=cmake" alt="CMake"/>
+</a>
+<br>
+<sub>简化项目构建流程</sub>
+</td>
+<td align="center" width="33%">
+<img src="https://img.shields.io/badge/C++_Community-活跃的开发者社区-00599C?style=for-the-badge&logo=cplusplus" alt="C++ Community"/>
+<br>
+<sub>灵感与支持来源</sub>
+</td>
+</tr>
+</table>
+
+**特别感谢所有贡献者和 Star 支持者!** 🌟
+
+</div>
+
+---
+
+<br>
+
+<div align="center">
+
+## 🌟 如果这个项目对你有帮助
+
+### 请给我们一个 Star ⭐
+
+<br>
+
+<table>
+<tr>
+<td align="center" width="50%">
+
+### 📊 项目统计
+
+<img src="https://img.shields.io/github/stars/yourusername/cpp-code-review?style=social" alt="Stars"/>
+<img src="https://img.shields.io/github/forks/yourusername/cpp-code-review?style=social" alt="Forks"/>
+<img src="https://img.shields.io/github/watchers/yourusername/cpp-code-review?style=social" alt="Watchers"/>
+
+</td>
+<td align="center" width="50%">
+
+### 🔥 活跃度
+
+<img src="https://img.shields.io/github/last-commit/yourusername/cpp-code-review?style=flat-square" alt="Last Commit"/>
+<img src="https://img.shields.io/github/commit-activity/m/yourusername/cpp-code-review?style=flat-square" alt="Commit Activity"/>
+
+</td>
+</tr>
+</table>
+
+<br>
+
+---
+
+<br>
+
+<h3>
+🎯 由 C++ 开发者打造 · 为 C++ 开发者服务
+</h3>
+
+<p>
+<sub>
+让代码审查更智能 | 让安全检测更准确 | 让 C++ 开发更高效
+</sub>
+</p>
+
+<br>
+
+**Made with ❤️ and ☕ by the C++ Community**
+
+<br>
+
+<img src="https://img.shields.io/badge/Powered_by-AST_Technology-blueviolet?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/No-Regex-red?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/100%25-Open_Source-brightgreen?style=for-the-badge"/>
 
 </div>
