@@ -23,6 +23,13 @@ struct CLIOptions {
     std::string html_output = "report.html"; // HTML 输出文件名
     bool enable_ai = false;                  // 启用 AI 建议 (V2.0)
     std::string llm_provider = "rule-based"; // LLM 提供者 (V2.0)
+
+    // ===== V1.5 Git 集成选项 =====
+    bool incremental = false;                // 增量分析模式
+    std::string incremental_mode = "workspace"; // 增量模式: workspace/staged/branch/commit/pr
+    std::string git_reference = "";          // Git 参考 (分支名/提交哈希)
+    bool pr_mode = false;                    // PR 审查模式
+    std::string pr_comment_file = "";        // PR 评论输出文件
 };
 
 /**

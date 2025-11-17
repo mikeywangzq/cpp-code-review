@@ -67,6 +67,46 @@ CLIOptions CLI::parseArguments(int argc, char* argv[]) {
             options.html_output = arg.substr(14);
             options.generate_html = true;
         }
+        // ===== V1.5 Git 集成选项 =====
+        else if (arg == "--incremental" || arg == "-i") {
+            options.incremental = true;
+            options.incremental_mode = "workspace";
+        }
+        else if (arg.find("--incremental=") == 0) {
+            options.incremental = true;
+            options.incremental_mode = arg.substr(14);
+        }
+        else if (arg == "--branch" && i + 1 < argc) {
+            options.incremental = true;
+            options.incremental_mode = "branch";
+            options.git_reference = argv[++i];
+        }
+        else if (arg.find("--branch=") == 0) {
+            options.incremental = true;
+            options.incremental_mode = "branch";
+            options.git_reference = arg.substr(9);
+        }
+        else if (arg == "--commit" && i + 1 < argc) {
+            options.incremental = true;
+            options.incremental_mode = "commit";
+            options.git_reference = argv[++i];
+        }
+        else if (arg.find("--commit=") == 0) {
+            options.incremental = true;
+            options.incremental_mode = "commit";
+            options.git_reference = arg.substr(9);
+        }
+        else if (arg == "--pr") {
+            options.pr_mode = true;
+            options.incremental = true;
+            options.incremental_mode = "pr";
+        }
+        else if (arg == "--pr-comment" && i + 1 < argc) {
+            options.pr_comment_file = argv[++i];
+        }
+        else if (arg.find("--pr-comment=") == 0) {
+            options.pr_comment_file = arg.substr(13);
+        }
         else if (arg == "scan" && i + 1 < argc) {
             // 扫描命令:下一个参数应该是路径
             ++i;
@@ -125,6 +165,14 @@ OPTIONS:
     -h, --help              Display this help message
     -v, --version           Display version information
 
+GIT INTEGRATION OPTIONS (V1.5):
+    -i, --incremental       Incremental analysis (workspace changes only)
+    --incremental=<mode>    Incremental mode: workspace|staged|branch|commit|pr
+    --branch=<name>         Analyze changes vs. specified branch
+    --commit=<hash>         Analyze changes since commit
+    --pr                    PR review mode (auto-detect base branch)
+    --pr-comment=<file>     Output PR comment to file
+
 EXAMPLES:
     # Scan a single file
     cpp-agent scan example.cpp
@@ -143,6 +191,13 @@ EXAMPLES:
 
     # Direct file analysis
     cpp-agent main.cpp --std=c++17
+
+    # Incremental analysis (V1.5)
+    cpp-agent --incremental              # Analyze workspace changes
+    cpp-agent --branch=main              # Analyze vs. main branch
+    cpp-agent --commit=abc123            # Analyze since commit abc123
+    cpp-agent --pr                       # PR review mode
+    cpp-agent --pr --pr-comment=review.md  # Generate PR comment
 
 DETECTED ISSUES (V2.0):
     Bug Detection (V1.0):

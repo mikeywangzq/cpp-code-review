@@ -351,6 +351,13 @@ sudo dnf install -y gcc-c++ cmake llvm-devel clang-devel
 
 # 🚀 分析真实项目并生成 HTML 报告
 ./cpp-agent scan /path/to/your/project --std=c++17 --html-output=my_report.html
+
+# 🆕 V1.5 Git 集成: 增量分析
+./cpp-agent --incremental                  # 只分析工作区变更的文件
+./cpp-agent --branch=main                   # 分析相对于 main 分支的变更
+./cpp-agent --commit=abc123                 # 分析从指定提交以来的变更
+./cpp-agent --pr                            # PR 审查模式 (自动检测基础分支)
+./cpp-agent --pr --pr-comment=review.md     # 生成 PR 评论文件
 ```
 
 <br>
@@ -743,8 +750,8 @@ std::getline(std::cin, input);
 - [x] 🔄 循环优化检测
 
 **Git 集成**
-- [ ] 📊 增量分析
-- [ ] 🔀 PR 自动审查
+- [x] 📊 增量分析
+- [x] 🔀 PR 自动审查
 
 **功能增强**
 - [x] 📄 HTML 报告
@@ -789,6 +796,85 @@ std::getline(std::cin, input);
 </td>
 </tr>
 </table>
+
+<br>
+
+## 🔗 Git 集成 (V1.5)
+
+<div align="center">
+<h3>⚡ 智能增量分析 · CI/CD 无缝集成</h3>
+<p><em>只分析变更代码 · 提升 10倍速度 · PR 自动审查</em></p>
+</div>
+
+### 📊 增量分析模式
+
+<table>
+<tr>
+<th width="25%">模式</th>
+<th width="35%">说明</th>
+<th width="40%">命令示例</th>
+</tr>
+<tr>
+<td><code>workspace</code></td>
+<td>工作区未提交的更改</td>
+<td><code>cpp-agent --incremental</code></td>
+</tr>
+<tr>
+<td><code>staged</code></td>
+<td>暂存区的更改</td>
+<td><code>cpp-agent --incremental=staged</code></td>
+</tr>
+<tr>
+<td><code>branch</code></td>
+<td>与指定分支的差异</td>
+<td><code>cpp-agent --branch=main</code></td>
+</tr>
+<tr>
+<td><code>commit</code></td>
+<td>从指定提交以来的更改</td>
+<td><code>cpp-agent --commit=abc123</code></td>
+</tr>
+<tr style="background-color: #e7f3ff;">
+<td><code>pr</code></td>
+<td>PR 审查模式 (自动检测)</td>
+<td><code>cpp-agent --pr</code></td>
+</tr>
+</table>
+
+### 🔀 PR 自动审查
+
+**支持的 CI/CD 平台:**
+- ✅ GitHub Actions
+- ✅ GitLab CI/CD
+- ✅ 其他支持环境变量的平台
+
+**快速开始:**
+
+1. **GitHub Actions 集成**
+```yaml
+# .github/workflows/pr-review.yml
+name: Code Review
+on: [pull_request]
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Review
+        run: ./build/cpp-agent --pr --pr-comment=review.md
+```
+
+2. **使用提供的脚本**
+```bash
+# 一键运行 PR 审查
+./scripts/pr-review.sh
+```
+
+**特性:**
+- 🚀 自动检测 PR 环境 (GitHub/GitLab)
+- 📝 生成 Markdown 格式的审查报告
+- 💬 自动发布 PR 评论 (需要配置 Token)
+- ⚡ 只分析变更的文件,快速高效
 
 <br>
 

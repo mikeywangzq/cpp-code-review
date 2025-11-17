@@ -29,10 +29,14 @@
 #include "report/html_reporter.h"
 // 配置管理
 #include "config/config.h"
+// Git 集成 (V1.5)
+#include "git/git_integration.h"
 
 #include <iostream>
 #include <memory>
 #include <filesystem>
+#include <sstream>
+#include <fstream>
 
 int main(int argc, char* argv[]) {
     using namespace cpp_review;
@@ -50,6 +54,48 @@ int main(int argc, char* argv[]) {
     if (options.version) {
         CLI::printVersion();
         return 0;
+    }
+
+    // ===== V1.5 Git 集成: 增量分析 =====
+    std::optional<PREnvironment> pr_env;
+
+    if (options.incremental) {
+        // 检查是否为 Git 仓库
+        if (!GitIntegration::isGitRepository()) {
+            std::cerr << "Error: Not a Git repository. Incremental analysis requires Git.\n";
+            return 1;
+        }
+
+        // 转换增量模式
+        IncrementalMode mode = IncrementalMode::WORKSPACE;
+        if (options.incremental_mode == "workspace") {
+            mode = IncrementalMode::WORKSPACE;
+        } else if (options.incremental_mode == "staged") {
+            mode = IncrementalMode::STAGED;
+        } else if (options.incremental_mode == "branch") {
+            mode = IncrementalMode::BRANCH;
+        } else if (options.incremental_mode == "commit") {
+            mode = IncrementalMode::COMMIT;
+        } else if (options.incremental_mode == "pr") {
+            mode = IncrementalMode::PR;
+            pr_env = GitIntegration::detectPREnvironment();
+        }
+
+        // 获取变更文件列表
+        std::cout << "🔍 Git incremental analysis mode: " << options.incremental_mode << "\n";
+        if (!options.git_reference.empty()) {
+            std::cout << "   Reference: " << options.git_reference << "\n";
+        }
+
+        auto changed_files = GitIntegration::getChangedFiles(mode, options.git_reference);
+
+        if (changed_files.empty()) {
+            std::cout << "✅ No C++ files changed. Nothing to analyze.\n";
+            return 0;
+        }
+
+        std::cout << "   Found " << changed_files.size() << " changed C++ file(s)\n\n";
+        options.source_paths = changed_files;
     }
 
     // 检查是否指定了源文件
@@ -174,6 +220,41 @@ int main(int argc, char* argv[]) {
             std::cout << "✓ HTML report generated successfully!\n";
         } catch (const std::exception& e) {
             std::cerr << "Error generating HTML report: " << e.what() << "\n";
+        }
+    }
+
+    // ===== V1.5 Git 集成: PR 评论生成 =====
+    if (options.pr_mode || !options.pr_comment_file.empty()) {
+        std::cout << "\n📝 Generating PR review comment...\n";
+
+        // 生成报告内容
+        std::ostringstream report_stream;
+        reporter.generateReport(report_stream);
+        std::string report_content = report_stream.str();
+
+        // 如果在 PR 环境中,使用 PR 环境信息
+        std::string pr_comment;
+        if (pr_env) {
+            pr_comment = GitIntegration::generatePRComment(report_content, *pr_env);
+            std::cout << "   PR Environment: " << pr_env->provider << "\n";
+            std::cout << "   PR #" << pr_env->pr_number << ": "
+                      << pr_env->base_branch << " <- " << pr_env->head_branch << "\n";
+        } else {
+            // 不在 PR 环境,生成简单格式
+            pr_comment = "## 🤖 C++ Code Review Report\n\n" + report_content;
+        }
+
+        // 输出到文件或标准输出
+        if (!options.pr_comment_file.empty()) {
+            std::ofstream comment_file(options.pr_comment_file);
+            if (comment_file.is_open()) {
+                comment_file << pr_comment;
+                std::cout << "✓ PR comment saved to: " << options.pr_comment_file << "\n";
+            } else {
+                std::cerr << "Error: Cannot write to " << options.pr_comment_file << "\n";
+            }
+        } else {
+            std::cout << "\n" << pr_comment << "\n";
         }
     }
 

@@ -40,6 +40,7 @@ set(SOURCES
     src/config/config.cpp
     src/cli/cli.cpp
     src/llm/llm_enhancer.cpp
+    src/git/git_integration.cpp
 )
 
 # Create executable
