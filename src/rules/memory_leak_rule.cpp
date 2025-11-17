@@ -101,13 +101,19 @@ void MemoryLeakVisitor::checkForLeak(const clang::VarDecl* decl, const Allocatio
     reporter_.addIssue(issue);
 }
 
+void MemoryLeakVisitor::checkAllAllocations() {
+    // Check all tracked allocations for leaks
+    for (const auto& pair : allocations_) {
+        checkForLeak(pair.first, pair.second);
+    }
+}
+
 void MemoryLeakRule::check(clang::ASTContext* context, Reporter& reporter) {
     MemoryLeakVisitor visitor(context, reporter);
     visitor.TraverseDecl(context->getTranslationUnitDecl());
 
-    // After traversal, check for leaks
-    // Note: In a real implementation, we'd need more sophisticated analysis
-    // to handle control flow properly. This is a simplified version.
+    // After traversal, check all tracked allocations for leaks
+    visitor.checkAllAllocations();
 }
 
 } // namespace cpp_review

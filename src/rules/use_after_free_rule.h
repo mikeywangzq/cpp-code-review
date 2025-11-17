@@ -40,6 +40,10 @@ public:
         return "Use-After-Free Detection";
     }
 
+    std::string getDescription() const override {
+        return "Detects use-after-free vulnerabilities where pointers are dereferenced after deletion";
+    }
+
     void check(clang::ASTContext* context, Reporter& reporter) override {
         UseAfterFreeVisitor visitor(context, reporter);
         visitor.TraverseDecl(context->getTranslationUnitDecl());

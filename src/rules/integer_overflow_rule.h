@@ -34,6 +34,10 @@ public:
         return "Integer Overflow Detection";
     }
 
+    std::string getDescription() const override {
+        return "Detects potential integer overflow in arithmetic operations and narrowing conversions";
+    }
+
     void check(clang::ASTContext* context, Reporter& reporter) override {
         IntegerOverflowVisitor visitor(context, reporter);
         visitor.TraverseDecl(context->getTranslationUnitDecl());

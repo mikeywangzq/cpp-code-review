@@ -18,6 +18,9 @@ public:
     bool VisitReturnStmt(clang::ReturnStmt* returnStmt);
     bool VisitVarDecl(clang::VarDecl* decl);
 
+    // Public method to check for leaks after traversal
+    void checkAllAllocations();
+
 private:
     struct AllocationInfo {
         clang::SourceLocation location;

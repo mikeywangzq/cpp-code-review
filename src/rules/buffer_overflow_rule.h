@@ -35,6 +35,10 @@ public:
         return "Buffer Overflow Detection";
     }
 
+    std::string getDescription() const override {
+        return "Detects buffer overflow and underflow in array accesses";
+    }
+
     void check(clang::ASTContext* context, Reporter& reporter) override {
         BufferOverflowVisitor visitor(context, reporter);
         visitor.TraverseDecl(context->getTranslationUnitDecl());

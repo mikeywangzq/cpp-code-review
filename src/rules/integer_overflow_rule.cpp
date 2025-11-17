@@ -1,5 +1,6 @@
 #include "rules/integer_overflow_rule.h"
 #include "clang/AST/Expr.h"
+#include <algorithm>
 
 namespace cpp_review {
 
