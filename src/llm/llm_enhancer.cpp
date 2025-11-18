@@ -1,30 +1,60 @@
 /*
- * LLM 智能增强系统实现
+ * LLM 智能增强系统实现 (V3.0)
+ * LLM Intelligence Enhancement System Implementation (V3.0)
  *
- * 本文件实现了基于规则的智能建议系统
- * 每个规则都有专门的处理器,提供 4 级修复策略:
- * 1. 快速修复 - 最小改动解决问题
- * 2. 推荐方案 - 使用现代 C++ 特性
- * 3. 最佳实践 - 遵循行业标准
- * 4. 设计模式 - 架构级优化
+ * 功能概述 / Overview:
+ * - 为代码问题提供 AI 驱动的智能修复建议
+ * - 支持多种后端: 规则引擎、OpenAI GPT-4、Anthropic Claude
+ * - 自动降级和错误处理
+ * - 插件化设计，易于扩展
+ *
+ * - Provide AI-driven intelligent fix suggestions for code issues
+ * - Support multiple backends: rule engine, OpenAI GPT-4, Anthropic Claude
+ * - Automatic fallback and error handling
+ * - Pluggable design, easy to extend
+ *
+ * 实现说明 / Implementation Notes:
+ * - 每个规则都有专门的处理器，提供 4 级修复策略
+ * - API 调用失败时自动回退到基于规则的建议
+ * - 完整的代码示例和最佳实践指导
+ *
+ * - Each rule has a dedicated handler providing 4-level fix strategies
+ * - Automatic fallback to rule-based suggestions on API failures
+ * - Complete code examples and best practice guidance
  */
 
 #include "llm/llm_enhancer.h"
 #include "llm/api_client.h"
 #include <sstream>
+#include <iostream>
 
 namespace cpp_review {
 
 // ============================================================================
-// RuleBasedProvider 实现 - 基于规则的智能提供者
+// RuleBasedProvider 实现 / RuleBasedProvider Implementation
+// 基于规则的智能提供者 - 内置，无需外部 API
 // ============================================================================
 
 /**
  * 生成智能建议的主入口
- * 根据规则 ID 路由到专门的处理器
+ * Main entry point for generating intelligent suggestions
+ *
+ * 功能 / Functionality:
+ * - 根据规则 ID 路由到专门的处理器
+ * - 为每种问题类型提供定制化的修复策略
+ * - 包含完整的代码示例和最佳实践
+ *
+ * - Route to specialized handlers based on rule ID
+ * - Provide customized fix strategies for each issue type
+ * - Include complete code examples and best practices
+ *
+ * @param issue 要增强的问题 / Issue to enhance
+ * @param code_context 代码上下文（可选）/ Code context (optional)
+ * @return 生成的智能建议 / Generated intelligent suggestion
  */
 std::string RuleBasedProvider::generateSuggestion(const Issue& issue, const std::string& code_context) {
     // 根据规则 ID 路由到专门的处理器
+    // Route to specialized handler based on rule ID
     if (issue.rule_id == "NULL-PTR-001") {
         return generateNullPointerSuggestion(issue);
     } else if (issue.rule_id == "MEMORY-LEAK-001") {
@@ -41,10 +71,21 @@ std::string RuleBasedProvider::generateSuggestion(const Issue& issue, const std:
         return generateLoopCopySuggestion(issue);
     }
 
-    // 对于未知规则,返回通用建议
+    // 对于未知规则，返回通用建议
+    // For unknown rules, return generic suggestion
     return generateGenericSuggestion(issue);
 }
 
+/**
+ * 生成空指针解引用的修复建议
+ * Generate fix suggestion for null pointer dereference
+ *
+ * 提供 4 级修复策略 / Provide 4-level fix strategies:
+ * 1. 立即修复 - 添加空指针检查
+ * 2. 推荐方案 - 使用智能指针
+ * 3. 最佳实践 - 使用引用
+ * 4. 设计模式 - 使用 Optional
+ */
 std::string RuleBasedProvider::generateNullPointerSuggestion(const Issue& issue) {
     std::stringstream ss;
     ss << "🤖 AI-Enhanced Fix Strategy:\n\n";
@@ -76,6 +117,10 @@ std::string RuleBasedProvider::generateNullPointerSuggestion(const Issue& issue)
     return ss.str();
 }
 
+/**
+ * 生成内存泄漏的修复建议
+ * Generate fix suggestion for memory leak
+ */
 std::string RuleBasedProvider::generateMemoryLeakSuggestion(const Issue& issue) {
     std::stringstream ss;
     ss << "🤖 AI-Enhanced Fix Strategy:\n\n";
@@ -110,6 +155,10 @@ std::string RuleBasedProvider::generateMemoryLeakSuggestion(const Issue& issue) 
     return ss.str();
 }
 
+/**
+ * 生成缓冲区溢出的修复建议
+ * Generate fix suggestion for buffer overflow
+ */
 std::string RuleBasedProvider::generateBufferOverflowSuggestion(const Issue& issue) {
     std::stringstream ss;
     ss << "🤖 AI-Enhanced Fix Strategy:\n\n";
@@ -149,6 +198,10 @@ std::string RuleBasedProvider::generateBufferOverflowSuggestion(const Issue& iss
     return ss.str();
 }
 
+/**
+ * 生成整数溢出的修复建议
+ * Generate fix suggestion for integer overflow
+ */
 std::string RuleBasedProvider::generateIntegerOverflowSuggestion(const Issue& issue) {
     std::stringstream ss;
     ss << "🤖 AI-Enhanced Fix Strategy:\n\n";
@@ -185,6 +238,10 @@ std::string RuleBasedProvider::generateIntegerOverflowSuggestion(const Issue& is
     return ss.str();
 }
 
+/**
+ * 生成 Use-After-Free 的修复建议
+ * Generate fix suggestion for use-after-free
+ */
 std::string RuleBasedProvider::generateUseAfterFreeSuggestion(const Issue& issue) {
     std::stringstream ss;
     ss << "🤖 AI-Enhanced Fix Strategy:\n\n";
@@ -228,6 +285,10 @@ std::string RuleBasedProvider::generateUseAfterFreeSuggestion(const Issue& issue
     return ss.str();
 }
 
+/**
+ * 生成智能指针的修复建议
+ * Generate fix suggestion for smart pointer usage
+ */
 std::string RuleBasedProvider::generateSmartPointerSuggestion(const Issue& issue) {
     std::stringstream ss;
     ss << "🤖 AI-Enhanced Refactoring Guide:\n\n";
@@ -273,6 +334,10 @@ std::string RuleBasedProvider::generateSmartPointerSuggestion(const Issue& issue
     return ss.str();
 }
 
+/**
+ * 生成循环拷贝优化的修复建议
+ * Generate fix suggestion for loop copy optimization
+ */
 std::string RuleBasedProvider::generateLoopCopySuggestion(const Issue& issue) {
     std::stringstream ss;
     ss << "🤖 AI-Enhanced Performance Optimization:\n\n";
@@ -313,6 +378,13 @@ std::string RuleBasedProvider::generateLoopCopySuggestion(const Issue& issue) {
     return ss.str();
 }
 
+/**
+ * 生成通用修复建议
+ * Generate generic fix suggestion
+ *
+ * 用于未知规则类型的后备建议
+ * Fallback suggestion for unknown rule types
+ */
 std::string RuleBasedProvider::generateGenericSuggestion(const Issue& issue) {
     std::stringstream ss;
     ss << "🤖 AI-Enhanced Analysis:\n\n";
@@ -330,22 +402,51 @@ std::string RuleBasedProvider::generateGenericSuggestion(const Issue& issue) {
 }
 
 // ============================================================================
-// OpenAIProvider Implementation (Real API Integration)
+// OpenAIProvider 实现 / OpenAIProvider Implementation
+// OpenAI GPT-4 API 集成
 // ============================================================================
 
+/**
+ * 使用 OpenAI GPT-4 生成修复建议
+ * Generate fix suggestion using OpenAI GPT-4
+ *
+ * 功能 / Functionality:
+ * - 构建上下文感知的提示词
+ * - 调用 GPT-4 API
+ * - 处理错误并降级到基于规则的建议
+ *
+ * - Build context-aware prompt
+ * - Call GPT-4 API
+ * - Handle errors and fallback to rule-based suggestions
+ *
+ * @param issue 要增强的问题 / Issue to enhance
+ * @param code_context 代码上下文 / Code context
+ * @return 生成的智能建议 / Generated intelligent suggestion
+ */
 std::string OpenAIProvider::generateSuggestion(const Issue& issue, const std::string& code_context) {
     if (!isAvailable()) {
         return "⚠️  OpenAI API not configured. Set OPENAI_API_KEY to enable AI suggestions.";
     }
 
     try {
-        // 创建 OpenAI 客户端
+        // 创建 OpenAI 客户端 / Create OpenAI client
         OpenAIClient client(api_key_);
 
-        // 构建提示词
+        // 构建提示词 / Build prompt
         std::string prompt = buildPrompt(issue, code_context);
 
-        // 调用 API
+        // BUG FIX: 检查提示词长度 / Check prompt length
+        // GPT-4 上下文限制约为 8K tokens，1 token ≈ 4 chars
+        // GPT-4 context limit is around 8K tokens, 1 token ≈ 4 chars
+        const size_t MAX_PROMPT_CHARS = 20000;  // ~5K tokens, 留余地给响应
+        if (prompt.length() > MAX_PROMPT_CHARS) {
+            std::cerr << "⚠️  Prompt too long (" << prompt.length()
+                      << " chars), truncating...\n";
+            prompt = prompt.substr(0, MAX_PROMPT_CHARS);
+            prompt += "\n... [truncated]";
+        }
+
+        // 调用 API / Call API
         APIResponse response = client.complete(prompt, 800, 0.3);
 
         if (response.success) {
@@ -358,7 +459,7 @@ std::string OpenAIProvider::generateSuggestion(const Issue& issue, const std::st
             ss << "❌ OpenAI API Error: " << response.error_message << "\n";
             ss << "Status Code: " << response.status_code << "\n\n";
             ss << "Falling back to rule-based suggestion:\n";
-            // 回退到基于规则的建议
+            // 回退到基于规则的建议 / Fallback to rule-based suggestion
             RuleBasedProvider fallback;
             return fallback.generateSuggestion(issue, code_context);
         }
@@ -374,34 +475,57 @@ std::string OpenAIProvider::generateSuggestion(const Issue& issue, const std::st
 
 /**
  * 检查 OpenAI 提供者是否可用
- * 要求配置了有效的 API 密钥
+ * Check if OpenAI provider is available
+ *
+ * @return true 如果 API 密钥已配置 / true if API key is configured
  */
 bool OpenAIProvider::isAvailable() const {
-    // 检查是否设置了 API 密钥
-    return !api_key_.empty() && api_key_ != "none";
+    // BUG FIX: 更严格的验证 / More strict validation
+    // 检查 API 密钥格式 / Check API key format
+    if (api_key_.empty() || api_key_ == "none") {
+        return false;
+    }
+
+    // OpenAI 密钥通常以 "sk-" 开头 / OpenAI keys usually start with "sk-"
+    if (api_key_.length() < 10) {
+        std::cerr << "⚠️  OpenAI API key seems too short\n";
+        return false;
+    }
+
+    return true;
 }
 
 /**
  * 构建发送给 OpenAI 的提示词
- * 包含问题详情、严重性、代码上下文等
+ * Build prompt to send to OpenAI
+ *
+ * @param issue 问题详情 / Issue details
+ * @param code_context 代码上下文 / Code context
+ * @return 构建的提示词 / Built prompt
  */
 std::string OpenAIProvider::buildPrompt(const Issue& issue, const std::string& code_context) {
     std::stringstream ss;
     ss << "You are a C++ code review expert. Analyze this issue and provide a detailed fix:\n\n";
     ss << "Issue Type: " << issue.rule_id << "\n";
     ss << "Severity: ";
+
+    // BUG FIX: 处理所有严重性级别 / Handle all severity levels
     switch (issue.severity) {
         case Severity::CRITICAL: ss << "CRITICAL"; break;
         case Severity::HIGH: ss << "HIGH"; break;
         case Severity::MEDIUM: ss << "MEDIUM"; break;
         case Severity::LOW: ss << "LOW"; break;
         case Severity::SUGGESTION: ss << "SUGGESTION"; break;
+        default: ss << "UNKNOWN"; break;
     }
+
     ss << "\n";
     ss << "Description: " << issue.description << "\n\n";
+
     if (!code_context.empty()) {
         ss << "Code Context:\n" << code_context << "\n\n";
     }
+
     ss << "Provide:\n";
     ss << "1. Detailed explanation of the issue\n";
     ss << "2. Step-by-step fix instructions\n";
@@ -412,22 +536,38 @@ std::string OpenAIProvider::buildPrompt(const Issue& issue, const std::string& c
 }
 
 // ============================================================================
-// AnthropicProvider Implementation (Real API Integration)
+// AnthropicProvider 实现 / AnthropicProvider Implementation
+// Anthropic Claude API 集成
 // ============================================================================
 
+/**
+ * 使用 Anthropic Claude 生成修复建议
+ * Generate fix suggestion using Anthropic Claude
+ */
 std::string AnthropicProvider::generateSuggestion(const Issue& issue, const std::string& code_context) {
     if (!isAvailable()) {
         return "⚠️  Anthropic API not configured. Set ANTHROPIC_API_KEY to enable AI suggestions.";
     }
 
     try {
-        // 创建 Anthropic 客户端
+        // 创建 Anthropic 客户端 / Create Anthropic client
         AnthropicClient client(api_key_);
 
-        // 构建提示词
+        // 构建提示词 / Build prompt
         std::string prompt = buildPrompt(issue, code_context);
 
-        // 调用 API
+        // BUG FIX: 检查提示词长度 / Check prompt length
+        // Claude 支持 200K tokens，但我们还是限制一下
+        // Claude supports 200K tokens, but we still limit it
+        const size_t MAX_PROMPT_CHARS = 50000;  // ~12K tokens
+        if (prompt.length() > MAX_PROMPT_CHARS) {
+            std::cerr << "⚠️  Prompt too long (" << prompt.length()
+                      << " chars), truncating...\n";
+            prompt = prompt.substr(0, MAX_PROMPT_CHARS);
+            prompt += "\n... [truncated]";
+        }
+
+        // 调用 API / Call API
         APIResponse response = client.message(prompt, 800, 0.3);
 
         if (response.success) {
@@ -440,7 +580,7 @@ std::string AnthropicProvider::generateSuggestion(const Issue& issue, const std:
             ss << "❌ Anthropic API Error: " << response.error_message << "\n";
             ss << "Status Code: " << response.status_code << "\n\n";
             ss << "Falling back to rule-based suggestion:\n";
-            // 回退到基于规则的建议
+            // 回退到基于规则的建议 / Fallback to rule-based suggestion
             RuleBasedProvider fallback;
             return fallback.generateSuggestion(issue, code_context);
         }
@@ -454,22 +594,45 @@ std::string AnthropicProvider::generateSuggestion(const Issue& issue, const std:
     }
 }
 
+/**
+ * 检查 Anthropic 提供者是否可用
+ * Check if Anthropic provider is available
+ */
 bool AnthropicProvider::isAvailable() const {
-    return !api_key_.empty() && api_key_ != "none";
+    // BUG FIX: 更严格的验证 / More strict validation
+    if (api_key_.empty() || api_key_ == "none") {
+        return false;
+    }
+
+    // Anthropic 密钥通常以 "sk-ant-" 开头 / Anthropic keys usually start with "sk-ant-"
+    if (api_key_.length() < 10) {
+        std::cerr << "⚠️  Anthropic API key seems too short\n";
+        return false;
+    }
+
+    return true;
 }
 
+/**
+ * 构建发送给 Anthropic 的提示词
+ * Build prompt to send to Anthropic
+ */
 std::string AnthropicProvider::buildPrompt(const Issue& issue, const std::string& code_context) {
     std::stringstream ss;
     ss << "You are a C++ code review expert. Analyze this issue and provide a detailed, actionable fix.\n\n";
     ss << "Issue Type: " << issue.rule_id << "\n";
     ss << "Severity: ";
+
+    // BUG FIX: 处理所有严重性级别 / Handle all severity levels
     switch (issue.severity) {
         case Severity::CRITICAL: ss << "CRITICAL"; break;
         case Severity::HIGH: ss << "HIGH"; break;
         case Severity::MEDIUM: ss << "MEDIUM"; break;
         case Severity::LOW: ss << "LOW"; break;
         case Severity::SUGGESTION: ss << "SUGGESTION"; break;
+        default: ss << "UNKNOWN"; break;
     }
+
     ss << "\n";
     ss << "Location: " << issue.file_path << ":" << issue.line << ":" << issue.column << "\n";
     ss << "Description: " << issue.description << "\n\n";
@@ -489,28 +652,64 @@ std::string AnthropicProvider::buildPrompt(const Issue& issue, const std::string
 }
 
 // ============================================================================
-// LLMEnhancer 实现 - LLM 增强器
+// LLMEnhancer 实现 / LLMEnhancer Implementation
+// LLM 增强器 - 协调 LLM 提供者
 // ============================================================================
 
+/**
+ * 构造 LLM 增强器
+ * Construct LLM enhancer
+ *
+ * @param provider LLM 提供者 / LLM provider
+ */
 LLMEnhancer::LLMEnhancer(std::shared_ptr<LLMProvider> provider)
-    : provider_(std::move(provider)) {}
+    : provider_(std::move(provider)) {
+    // BUG FIX: 验证提供者 / Validate provider
+    if (!provider_) {
+        std::cerr << "⚠️  LLMEnhancer: 提供者为空，增强功能将被禁用\n";
+        std::cerr << "⚠️  LLMEnhancer: Provider is null, enhancement disabled\n";
+    }
+}
 
 /**
  * 使用 LLM 生成的建议增强单个问题
- * 将 AI 建议追加到原有建议后面
+ * Enhance a single issue with LLM-generated suggestions
+ *
+ * 功能 / Functionality:
+ * - 调用 LLM 提供者生成智能建议
+ * - 将 AI 建议追加到原有建议后面
+ * - 处理异常情况
+ *
+ * - Call LLM provider to generate intelligent suggestions
+ * - Append AI suggestions to existing suggestions
+ * - Handle exceptional cases
+ *
+ * @param issue 原始问题 / Original issue
+ * @param code_context 代码上下文 / Code context
+ * @return 增强后的问题 / Enhanced issue
  */
 Issue LLMEnhancer::enhanceIssue(const Issue& issue, const std::string& code_context) {
     Issue enhanced = issue;
 
-    if (isEnabled()) {
-        // 生成 AI 增强的建议
+    // BUG FIX: 检查提供者是否可用 / Check if provider is available
+    if (!isEnabled()) {
+        std::cerr << "ℹ️  LLM enhancement disabled or provider unavailable\n";
+        return enhanced;  // 返回原始问题 / Return original issue
+    }
+
+    try {
+        // 生成 AI 增强的建议 / Generate AI-enhanced suggestion
         std::string ai_suggestion = provider_->generateSuggestion(issue, code_context);
 
-        // 追加到现有建议后
+        // 追加到现有建议后 / Append to existing suggestion
         if (!enhanced.suggestion.empty()) {
             enhanced.suggestion += "\n\n" + std::string(70, '=') + "\n";
         }
         enhanced.suggestion += ai_suggestion;
+
+    } catch (const std::exception& e) {
+        std::cerr << "❌ Exception in enhanceIssue: " << e.what() << "\n";
+        // 返回原始问题，不中断程序 / Return original issue, don't interrupt
     }
 
     return enhanced;
@@ -518,44 +717,74 @@ Issue LLMEnhancer::enhanceIssue(const Issue& issue, const std::string& code_cont
 
 /**
  * 增强报告器中的所有问题
- * 当前为占位符实现
+ * Enhance all issues in a reporter
+ *
+ * 注意 / Note:
+ * - 当前为占位符实现
+ * - 需要 Reporter 提供修改问题的接口
+ *
+ * - Currently a placeholder implementation
+ * - Requires Reporter to provide interface for modifying issues
+ *
+ * @param reporter 包含问题的报告器 / Reporter containing issues
  */
 void LLMEnhancer::enhanceAllIssues(Reporter& reporter) {
     if (!isEnabled()) {
         return;
     }
 
-    // 需要 Reporter 提供修改问题的接口
-    // 当前为占位符
+    // TODO: 需要 Reporter 提供修改问题的接口
+    // TODO: Need Reporter to provide interface for modifying issues
+    // 当前为占位符 / Currently a placeholder
+
+    std::cerr << "ℹ️  enhanceAllIssues: 功能尚未实现 / not yet implemented\n";
 }
 
 // ============================================================================
-// LLMProviderFactory 实现 - 提供者工厂
+// LLMProviderFactory 实现 / LLMProviderFactory Implementation
+// 提供者工厂 - 创建不同类型的 LLM 提供者
 // ============================================================================
 
 /**
  * 创建指定类型的 LLM 提供者
- * @param type 提供者类型 (基于规则/OpenAI/Anthropic/无)
- * @param config 配置字符串 (如 API 密钥)
- * @return LLM 提供者的共享指针
+ * Create LLM provider of specified type
+ *
+ * @param type 提供者类型 / Provider type
+ * @param config 配置字符串（如 API 密钥）/ Configuration string (e.g., API key)
+ * @return LLM 提供者的共享指针 / Shared pointer to LLM provider
  */
 std::shared_ptr<LLMProvider> LLMProviderFactory::create(ProviderType type, const std::string& config) {
     switch (type) {
         case ProviderType::RULE_BASED:
-            // 创建基于规则的提供者 (内置,无需配置)
+            // 创建基于规则的提供者（内置，无需配置）
+            // Create rule-based provider (built-in, no configuration needed)
             return std::make_shared<RuleBasedProvider>();
 
         case ProviderType::OPENAI:
-            // 创建 OpenAI 提供者 (需要 API 密钥)
+            // 创建 OpenAI 提供者（需要 API 密钥）
+            // Create OpenAI provider (requires API key)
+            if (config.empty()) {
+                std::cerr << "⚠️  OpenAI provider requires API key\n";
+                return nullptr;
+            }
             return std::make_shared<OpenAIProvider>(config);
 
         case ProviderType::ANTHROPIC:
-            // 创建 Anthropic 提供者 (需要 API 密钥)
+            // 创建 Anthropic 提供者（需要 API 密钥）
+            // Create Anthropic provider (requires API key)
+            if (config.empty()) {
+                std::cerr << "⚠️  Anthropic provider requires API key\n";
+                return nullptr;
+            }
             return std::make_shared<AnthropicProvider>(config);
 
         case ProviderType::NONE:
+            // 禁用 LLM 功能 / Disable LLM functionality
+            return nullptr;
+
         default:
-            // 禁用 LLM 功能
+            // BUG FIX: 显式处理未知类型 / Explicitly handle unknown types
+            std::cerr << "❌ Unknown provider type: " << static_cast<int>(type) << "\n";
             return nullptr;
     }
 }
