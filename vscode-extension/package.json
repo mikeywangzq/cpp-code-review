@@ -1,0 +1,170 @@
+{
+  "name": "cpp-code-review",
+  "displayName": "C++ Code Review Agent",
+  "description": "实时 C++ 代码审查和智能修复建议",
+  "version": "1.0.0",
+  "publisher": "cpp-review",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Linters",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "c++",
+    "cpp",
+    "code review",
+    "static analysis",
+    "linter",
+    "security"
+  ],
+  "activationEvents": [
+    "onLanguage:cpp",
+    "onLanguage:c",
+    "onCommand:cpp-review.analyze",
+    "onCommand:cpp-review.analyzeFile",
+    "onCommand:cpp-review.autoFix"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cpp-review.analyze",
+        "title": "C++ Review: Analyze Workspace",
+        "category": "C++ Review"
+      },
+      {
+        "command": "cpp-review.analyzeFile",
+        "title": "C++ Review: Analyze Current File",
+        "category": "C++ Review"
+      },
+      {
+        "command": "cpp-review.autoFix",
+        "title": "C++ Review: Auto Fix Issues",
+        "category": "C++ Review"
+      },
+      {
+        "command": "cpp-review.clearDiagnostics",
+        "title": "C++ Review: Clear Diagnostics",
+        "category": "C++ Review"
+      }
+    ],
+    "configuration": {
+      "title": "C++ Code Review",
+      "properties": {
+        "cpp-review.executablePath": {
+          "type": "string",
+          "default": "cpp-agent",
+          "description": "cpp-agent 可执行文件的路径"
+        },
+        "cpp-review.cppStandard": {
+          "type": "string",
+          "default": "c++17",
+          "enum": [
+            "c++11",
+            "c++14",
+            "c++17",
+            "c++20"
+          ],
+          "description": "C++ 标准版本"
+        },
+        "cpp-review.enableAutoReview": {
+          "type": "boolean",
+          "default": true,
+          "description": "保存文件时自动运行代码审查"
+        },
+        "cpp-review.enableAISuggestions": {
+          "type": "boolean",
+          "default": false,
+          "description": "启用 AI 智能修复建议 (需要 API 密钥)"
+        },
+        "cpp-review.aiProvider": {
+          "type": "string",
+          "default": "rule-based",
+          "enum": [
+            "rule-based",
+            "openai",
+            "anthropic"
+          ],
+          "description": "AI 提供者选择"
+        },
+        "cpp-review.openaiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI API 密钥"
+        },
+        "cpp-review.anthropicApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Anthropic API 密钥"
+        },
+        "cpp-review.enableTaintAnalysis": {
+          "type": "boolean",
+          "default": true,
+          "description": "启用数据流污点分析"
+        },
+        "cpp-review.severityFilter": {
+          "type": "array",
+          "default": [
+            "CRITICAL",
+            "HIGH",
+            "MEDIUM",
+            "LOW",
+            "SUGGESTION"
+          ],
+          "description": "显示的严重性级别"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "cpp-review.analyzeFile",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorLangId == cpp || editorLangId == c"
+      },
+      {
+        "command": "cpp-review.autoFix",
+        "key": "ctrl+shift+f",
+        "mac": "cmd+shift+f",
+        "when": "editorLangId == cpp || editorLangId == c"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "cpp-review.analyzeFile",
+          "when": "editorLangId == cpp || editorLangId == c",
+          "group": "cpp-review@1"
+        },
+        {
+          "command": "cpp-review.autoFix",
+          "when": "editorLangId == cpp || editorLangId == c",
+          "group": "cpp-review@2"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "@types/glob": "^8.0.0"
+  }
+}

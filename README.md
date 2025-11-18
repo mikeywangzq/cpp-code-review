@@ -2,12 +2,13 @@
 
 # 🛡️ C++ 智能代码审查 Agent
 
-### 基于 Clang/LLVM AST 的专业级静态分析工具
+### 基于 Clang/LLVM AST 的专业级静态分析工具 · AI 驱动 · 自动修复
 
 <p align="center">
-  <img src="https://img.shields.io/badge/版本-2.0.0-brightgreen?style=for-the-badge&logo=semantic-release" alt="Version"/>
+  <img src="https://img.shields.io/badge/版本-3.0.0-brightgreen?style=for-the-badge&logo=semantic-release" alt="Version"/>
   <img src="https://img.shields.io/badge/C++-17-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" alt="C++17"/>
   <img src="https://img.shields.io/badge/Powered_by-Clang_LLVM-262D3A?style=for-the-badge&logo=llvm" alt="Clang"/>
+  <img src="https://img.shields.io/badge/AI-GPT4_Claude-7C3AED?style=for-the-badge&logo=openai" alt="AI"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"/>
 </p>
 
@@ -767,7 +768,7 @@ std::getline(std::cin, input);
 <td width="33%" valign="top">
 
 ### ✅ V2.0 智能化
-<sub>当前版本</sub>
+<sub>已发布</sub>
 
 **高级安全分析**
 - [x] 🔢 整数溢出检测
@@ -778,14 +779,51 @@ std::getline(std::cin, input);
 - [x] 🤖 LLM 智能建议系统
 - [x] 📝 7种规则专属 AI 修复策略
 - [x] 🎯 基于规则的智能提示
-- [ ] 🔮 自动代码修复
 
-**未来计划**
-- [ ] 🌐 OpenAI/Anthropic API 集成
-- [ ] 🎨 VS Code 插件
-- [ ] 🔄 CI/CD 集成
-- [ ] 🐙 GitHub Actions
-- [ ] 🔬 数据流污点分析
+<br>
+
+<div align="center">
+<img src="https://img.shields.io/badge/状态-已发布-brightgreen?style=for-the-badge"/>
+</div>
+
+</td>
+</tr>
+<tr>
+<td width="100%" colspan="3" valign="top">
+
+### 🚀 V3.0 全自动化
+<sub>当前版本 - 刚刚发布!</sub>
+
+**🔮 自动代码修复**
+- [x] ✨ 智能修复生成
+- [x] 🔧 一键自动应用修复
+- [x] 💾 安全备份机制
+- [x] 🔄 回滚功能
+
+**🌐 LLM API 集成**
+- [x] 🤖 OpenAI GPT-4 集成
+- [x] 🧠 Anthropic Claude 集成
+- [x] 🔌 可扩展 API 框架
+- [x] ⚡ 自动回退机制
+
+**🎨 IDE 集成**
+- [x] 💻 VS Code 扩展
+- [x] 📊 实时诊断
+- [x] 🎯 智能建议
+- [x] ⌨️ 快捷键支持
+
+**🔄 CI/CD 全平台支持**
+- [x] 🐙 GitHub Actions
+- [x] 🦊 GitLab CI/CD
+- [x] 🔵 CircleCI
+- [x] 🔧 Jenkins
+- [x] 📊 自动 PR 评论
+
+**🔬 高级安全分析**
+- [x] 🔍 数据流污点分析
+- [x] 💉 SQL 注入检测
+- [x] 💻 命令注入检测
+- [x] 📁 路径遍历检测
 
 <br>
 
@@ -875,6 +913,192 @@ jobs:
 - 📝 生成 Markdown 格式的审查报告
 - 💬 自动发布 PR 评论 (需要配置 Token)
 - ⚡ 只分析变更的文件,快速高效
+
+<br>
+
+## 🚀 V3.0 新功能详解
+
+<div align="center">
+<h3>🎉 全自动化 · AI 驱动 · 多平台集成</h3>
+<p><em>V3.0 带来革命性的自动修复和多平台 CI/CD 集成</em></p>
+</div>
+
+### 🔮 自动代码修复
+
+**智能修复引擎** - 自动生成和应用代码修复
+
+```bash
+# 自动修复所有问题
+cpp-agent scan main.cpp --auto-fix
+
+# 交互式修复
+cpp-agent scan main.cpp --auto-fix --interactive
+
+# 只修复严重问题
+cpp-agent scan main.cpp --auto-fix --severity-filter=CRITICAL,HIGH
+```
+
+**支持的修复类型:**
+- ✅ 空指针检查自动添加
+- ✅ 变量初始化自动补全
+- ✅ 赋值/比较混淆自动更正
+- ✅ 不安全函数自动替换
+- ✅ 头文件自动添加
+
+**安全特性:**
+- 💾 自动备份原文件 (.backup)
+- 🔄 一键回滚功能
+- 🔍 修复前预览
+- ⚡ 批量修复支持
+
+### 🌐 LLM API 集成
+
+**OpenAI GPT-4 集成**
+
+```bash
+# 使用 GPT-4 生成智能建议
+export OPENAI_API_KEY="sk-your-api-key"
+cpp-agent scan main.cpp --enable-ai --ai-provider=openai
+```
+
+**Anthropic Claude 集成**
+
+```bash
+# 使用 Claude 生成智能建议
+export ANTHROPIC_API_KEY="sk-ant-your-api-key"
+cpp-agent scan main.cpp --enable-ai --ai-provider=anthropic
+```
+
+**特性:**
+- 🤖 上下文感知的代码建议
+- 📚 完整的修复代码示例
+- 🎯 根因分析
+- ⚡ 自动回退到规则引擎
+- 🔒 API 密钥安全管理
+
+### 💻 VS Code 扩展
+
+**实时代码审查 IDE 集成**
+
+```bash
+# 安装扩展
+code --install-extension cpp-code-review-1.0.0.vsix
+
+# 或从 VS Code 市场搜索 "C++ Code Review Agent"
+```
+
+**功能特性:**
+- 📊 保存时自动审查
+- 🎯 实时问题标记
+- 💡 智能修复建议
+- ⚡ 一键自动修复
+- 🔧 丰富的配置选项
+
+**快捷键:**
+- `Ctrl+Shift+R` (Mac: `Cmd+Shift+R`) - 分析当前文件
+- `Ctrl+Shift+F` (Mac: `Cmd+Shift+F`) - 自动修复
+
+### 🔄 CI/CD 多平台支持
+
+**GitHub Actions** - `.github/workflows/code-review.yml`
+
+```yaml
+name: C++ Code Review
+on: [push, pull_request]
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build cpp-agent
+        run: ./build.sh
+      - name: Run Review
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          ./build/cpp-agent --pr \
+            --enable-taint-analysis \
+            --enable-ai \
+            --pr-comment=review.md
+```
+
+**GitLab CI/CD** - `.gitlab-ci.yml`
+
+```yaml
+code-review:
+  script:
+    - ./build/cpp-agent --pr --pr-comment=mr-review.md
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+```
+
+**CircleCI** - `.circleci/config.yml`
+
+```yaml
+jobs:
+  code-review:
+    docker:
+      - image: ubuntu:22.04
+    steps:
+      - checkout
+      - run: ./build/cpp-agent --incremental
+```
+
+**Jenkins** - `Jenkinsfile`
+
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage('Code Review') {
+            steps {
+                sh './build/cpp-agent --pr'
+            }
+        }
+    }
+}
+```
+
+### 🔬 数据流污点分析
+
+**高级安全漏洞检测**
+
+```bash
+# 启用污点分析
+cpp-agent scan src/ --enable-taint-analysis
+```
+
+**检测的安全漏洞:**
+- 💉 **SQL 注入** - 不受信任的数据流向数据库查询
+- 💻 **命令注入** - 用户输入流向系统命令
+- 📁 **路径遍历** - 未验证的路径操作
+- 🔐 **XSS 攻击** - 未净化的输出
+
+**污点源 (Source):**
+- 用户输入 (stdin, getline, scanf)
+- 网络数据 (recv, read)
+- 文件读取 (fread, fgets)
+- 环境变量 (getenv)
+
+**污点汇 (Sink):**
+- SQL 查询 (mysql_query, sqlite3_exec)
+- 命令执行 (system, popen, exec)
+- 文件操作 (fopen, open)
+- 格式化输出 (printf, sprintf)
+
+**示例报告:**
+
+```
+🚨 潜在的SQL注入漏洞:
+  不受信任的数据从 'user_input' (第 10 行)
+  流向敏感函数 'mysql_query' (第 25 行)
+
+建议修复:
+  1. 在第 10 行后立即验证 'user_input'
+  2. 使用参数化查询或预编译语句
+  3. 应用适当的转义函数
+```
 
 <br>
 

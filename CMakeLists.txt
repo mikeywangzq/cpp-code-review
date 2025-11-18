@@ -1,9 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
-project(cpp-code-review VERSION 2.0.0)
+project(cpp-code-review VERSION 3.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Optional: Enable CURL for API support
+option(ENABLE_CURL "Enable CURL for LLM API support" OFF)
 
 # Find LLVM and Clang
 find_package(LLVM REQUIRED CONFIG)
@@ -41,7 +44,15 @@ set(SOURCES
     src/cli/cli.cpp
     src/llm/llm_enhancer.cpp
     src/git/git_integration.cpp
+    src/fixer/auto_fixer.cpp
+    src/analysis/taint_analysis.cpp
 )
+
+# Optional API client sources
+if(ENABLE_CURL)
+    list(APPEND SOURCES src/llm/api_client.cpp)
+    add_definitions(-DENABLE_CURL)
+endif()
 
 # Create executable
 add_executable(cpp-agent ${SOURCES})
@@ -75,6 +86,13 @@ llvm_map_components_to_libnames(llvm_libs
     irreader
 )
 target_link_libraries(cpp-agent ${llvm_libs})
+
+# Optional CURL library for API support
+if(ENABLE_CURL)
+    find_package(CURL REQUIRED)
+    target_link_libraries(cpp-agent ${CURL_LIBRARIES})
+    target_include_directories(cpp-agent PRIVATE ${CURL_INCLUDE_DIRS})
+endif()
 
 # Installation
 install(TARGETS cpp-agent DESTINATION bin)

@@ -1,0 +1,159 @@
+# GitLab CI/CD 配置
+# 自动代码审查和质量检查
+
+stages:
+  - build
+  - review
+  - report
+
+variables:
+  CPP_STANDARD: "c++17"
+  ENABLE_TAINT_ANALYSIS: "true"
+  ENABLE_AI_SUGGESTIONS: "false"
+
+# 缓存依赖以加速构建
+cache:
+  paths:
+    - build/
+    - .cache/
+
+# 构建 cpp-agent
+build:
+  stage: build
+  image: ubuntu:22.04
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y build-essential cmake llvm-14 llvm-14-dev clang-14 libclang-14-dev libcurl4-openssl-dev
+  script:
+    - mkdir -p build
+    - cd build
+    - cmake .. -DENABLE_CURL=ON -DCMAKE_BUILD_TYPE=Release
+    - make -j$(nproc)
+  artifacts:
+    paths:
+      - build/cpp-agent
+    expire_in: 1 hour
+
+# 代码审查 - Merge Request
+review:mr:
+  stage: review
+  image: ubuntu:22.04
+  dependencies:
+    - build
+  only:
+    - merge_requests
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y git
+  script:
+    - |
+      if [ "$ENABLE_TAINT_ANALYSIS" = "true" ]; then
+        TAINT_FLAG="--enable-taint-analysis"
+      fi
+    - |
+      if [ "$ENABLE_AI_SUGGESTIONS" = "true" ]; then
+        AI_FLAGS="--enable-ai --ai-provider=${AI_PROVIDER:-rule-based}"
+        if [ -n "$OPENAI_API_KEY" ]; then
+          AI_FLAGS="$AI_FLAGS --openai-key=$OPENAI_API_KEY"
+        fi
+        if [ -n "$ANTHROPIC_API_KEY" ]; then
+          AI_FLAGS="$AI_FLAGS --anthropic-key=$ANTHROPIC_API_KEY"
+        fi
+      fi
+    - ./build/cpp-agent --pr --pr-comment=mr-review.md --std=$CPP_STANDARD $TAINT_FLAG $AI_FLAGS || true
+    - |
+      if [ -f mr-review.md ]; then
+        echo "📊 代码审查报告:"
+        cat mr-review.md
+      fi
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+    paths:
+      - mr-review.md
+    expire_in: 30 days
+  allow_failure: true
+
+# 代码审查 - Push
+review:push:
+  stage: review
+  image: ubuntu:22.04
+  dependencies:
+    - build
+  only:
+    - branches
+  except:
+    - merge_requests
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y git
+  script:
+    - |
+      if [ "$ENABLE_TAINT_ANALYSIS" = "true" ]; then
+        TAINT_FLAG="--enable-taint-analysis"
+      fi
+    - ./build/cpp-agent --incremental --std=$CPP_STANDARD $TAINT_FLAG
+  allow_failure: true
+
+# 全量扫描 (定时任务)
+review:full:
+  stage: review
+  image: ubuntu:22.04
+  dependencies:
+    - build
+  only:
+    - schedules
+  script:
+    - ./build/cpp-agent scan . --std=$CPP_STANDARD --enable-taint-analysis --html-output=full-report.html
+  artifacts:
+    paths:
+      - full-report.html
+    expire_in: 90 days
+
+# 生成报告
+report:
+  stage: report
+  image: ubuntu:22.04
+  dependencies:
+    - build
+    - review:mr
+  only:
+    - merge_requests
+  script:
+    - |
+      if [ -f mr-review.md ]; then
+        # 转换为 GitLab Code Quality 格式
+        cat > gl-code-quality-report.json << 'EOF'
+        []
+        EOF
+
+        # 检查是否有严重问题
+        if grep -q "🚨 CRITICAL\|⚠️  HIGH" mr-review.md; then
+          echo "⚠️  发现严重或高优先级问题！"
+          echo "请查看 mr-review.md 了解详情"
+        else
+          echo "✅ 未发现严重问题"
+        fi
+      fi
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+
+# 安全扫描 (仅污点分析)
+security:
+  stage: review
+  image: ubuntu:22.04
+  dependencies:
+    - build
+  only:
+    - merge_requests
+    - main
+    - master
+    - develop
+  script:
+    - ./build/cpp-agent scan . --std=$CPP_STANDARD --enable-taint-analysis --severity-filter=CRITICAL,HIGH
+  artifacts:
+    paths:
+      - security-report.txt
+    expire_in: 30 days
+  allow_failure: true

@@ -10,6 +10,7 @@
  */
 
 #include "llm/llm_enhancer.h"
+#include "llm/api_client.h"
 #include <sstream>
 
 namespace cpp_review {
@@ -329,26 +330,46 @@ std::string RuleBasedProvider::generateGenericSuggestion(const Issue& issue) {
 }
 
 // ============================================================================
-// OpenAIProvider Implementation (Placeholder)
+// OpenAIProvider Implementation (Real API Integration)
 // ============================================================================
 
 std::string OpenAIProvider::generateSuggestion(const Issue& issue, const std::string& code_context) {
     if (!isAvailable()) {
-        return "OpenAI API not configured. Set OPENAI_API_KEY environment variable.";
+        return "⚠️  OpenAI API not configured. Set OPENAI_API_KEY to enable AI suggestions.";
     }
 
-    // TODO: Actual OpenAI API integration
-    // This is a placeholder for future implementation
-    std::stringstream ss;
-    ss << "🤖 OpenAI Integration (Not Implemented):\n\n";
-    ss << "To enable OpenAI-powered suggestions:\n";
-    ss << "1. Set OPENAI_API_KEY environment variable\n";
-    ss << "2. Install HTTP client library (e.g., libcurl)\n";
-    ss << "3. Implement API call to GPT-4\n\n";
-    ss << "Prompt would be:\n";
-    ss << buildPrompt(issue, code_context);
+    try {
+        // 创建 OpenAI 客户端
+        OpenAIClient client(api_key_);
 
-    return ss.str();
+        // 构建提示词
+        std::string prompt = buildPrompt(issue, code_context);
+
+        // 调用 API
+        APIResponse response = client.complete(prompt, 800, 0.3);
+
+        if (response.success) {
+            std::stringstream ss;
+            ss << "🤖 OpenAI GPT-4 Analysis:\n\n";
+            ss << response.content;
+            return ss.str();
+        } else {
+            std::stringstream ss;
+            ss << "❌ OpenAI API Error: " << response.error_message << "\n";
+            ss << "Status Code: " << response.status_code << "\n\n";
+            ss << "Falling back to rule-based suggestion:\n";
+            // 回退到基于规则的建议
+            RuleBasedProvider fallback;
+            return fallback.generateSuggestion(issue, code_context);
+        }
+
+    } catch (const std::exception& e) {
+        std::stringstream ss;
+        ss << "❌ Exception calling OpenAI API: " << e.what() << "\n\n";
+        ss << "Falling back to rule-based suggestion:\n";
+        RuleBasedProvider fallback;
+        return fallback.generateSuggestion(issue, code_context);
+    }
 }
 
 /**
@@ -386,6 +407,83 @@ std::string OpenAIProvider::buildPrompt(const Issue& issue, const std::string& c
     ss << "2. Step-by-step fix instructions\n";
     ss << "3. Complete corrected code example\n";
     ss << "4. Best practices to prevent similar issues\n";
+
+    return ss.str();
+}
+
+// ============================================================================
+// AnthropicProvider Implementation (Real API Integration)
+// ============================================================================
+
+std::string AnthropicProvider::generateSuggestion(const Issue& issue, const std::string& code_context) {
+    if (!isAvailable()) {
+        return "⚠️  Anthropic API not configured. Set ANTHROPIC_API_KEY to enable AI suggestions.";
+    }
+
+    try {
+        // 创建 Anthropic 客户端
+        AnthropicClient client(api_key_);
+
+        // 构建提示词
+        std::string prompt = buildPrompt(issue, code_context);
+
+        // 调用 API
+        APIResponse response = client.message(prompt, 800, 0.3);
+
+        if (response.success) {
+            std::stringstream ss;
+            ss << "🤖 Anthropic Claude Analysis:\n\n";
+            ss << response.content;
+            return ss.str();
+        } else {
+            std::stringstream ss;
+            ss << "❌ Anthropic API Error: " << response.error_message << "\n";
+            ss << "Status Code: " << response.status_code << "\n\n";
+            ss << "Falling back to rule-based suggestion:\n";
+            // 回退到基于规则的建议
+            RuleBasedProvider fallback;
+            return fallback.generateSuggestion(issue, code_context);
+        }
+
+    } catch (const std::exception& e) {
+        std::stringstream ss;
+        ss << "❌ Exception calling Anthropic API: " << e.what() << "\n\n";
+        ss << "Falling back to rule-based suggestion:\n";
+        RuleBasedProvider fallback;
+        return fallback.generateSuggestion(issue, code_context);
+    }
+}
+
+bool AnthropicProvider::isAvailable() const {
+    return !api_key_.empty() && api_key_ != "none";
+}
+
+std::string AnthropicProvider::buildPrompt(const Issue& issue, const std::string& code_context) {
+    std::stringstream ss;
+    ss << "You are a C++ code review expert. Analyze this issue and provide a detailed, actionable fix.\n\n";
+    ss << "Issue Type: " << issue.rule_id << "\n";
+    ss << "Severity: ";
+    switch (issue.severity) {
+        case Severity::CRITICAL: ss << "CRITICAL"; break;
+        case Severity::HIGH: ss << "HIGH"; break;
+        case Severity::MEDIUM: ss << "MEDIUM"; break;
+        case Severity::LOW: ss << "LOW"; break;
+        case Severity::SUGGESTION: ss << "SUGGESTION"; break;
+    }
+    ss << "\n";
+    ss << "Location: " << issue.file_path << ":" << issue.line << ":" << issue.column << "\n";
+    ss << "Description: " << issue.description << "\n\n";
+
+    if (!code_context.empty()) {
+        ss << "Code Context:\n```cpp\n" << code_context << "\n```\n\n";
+    }
+
+    ss << "Please provide:\n";
+    ss << "1. Root cause analysis\n";
+    ss << "2. Immediate fix with code example\n";
+    ss << "3. Long-term best practices\n";
+    ss << "4. Potential pitfalls to avoid\n\n";
+    ss << "Be concise and practical.";
 
     return ss.str();
 }
@@ -437,7 +535,7 @@ void LLMEnhancer::enhanceAllIssues(Reporter& reporter) {
 
 /**
  * 创建指定类型的 LLM 提供者
- * @param type 提供者类型 (基于规则/OpenAI/无)
+ * @param type 提供者类型 (基于规则/OpenAI/Anthropic/无)
  * @param config 配置字符串 (如 API 密钥)
  * @return LLM 提供者的共享指针
  */
@@ -450,6 +548,10 @@ std::shared_ptr<LLMProvider> LLMProviderFactory::create(ProviderType type, const
         case ProviderType::OPENAI:
             // 创建 OpenAI 提供者 (需要 API 密钥)
             return std::make_shared<OpenAIProvider>(config);
+
+        case ProviderType::ANTHROPIC:
+            // 创建 Anthropic 提供者 (需要 API 密钥)
+            return std::make_shared<AnthropicProvider>(config);
 
         case ProviderType::NONE:
         default:

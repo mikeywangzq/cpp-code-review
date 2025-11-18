@@ -84,14 +84,14 @@ private:
 };
 
 /**
- * OpenAI 提供者 (未来功能)
- * 占位符,用于未来集成 OpenAI GPT API
+ * OpenAI 提供者 (V3.0 完整实现)
+ * 集成 OpenAI GPT-4 API
  *
- * 计划功能:
- * - HTTP 客户端集成
+ * 特性:
+ * - 完整的 HTTP 客户端集成
  * - GPT-4 API 调用
  * - 上下文感知的代码建议
- * - 自动代码修复
+ * - 错误处理和回退机制
  */
 class OpenAIProvider : public LLMProvider {
 public:
@@ -99,7 +99,30 @@ public:
 
     std::string generateSuggestion(const Issue& issue, const std::string& code_context) override;
     bool isAvailable() const override;
-    std::string getName() const override { return "OpenAI GPT"; }
+    std::string getName() const override { return "OpenAI GPT-4"; }
+
+private:
+    std::string api_key_;
+    std::string buildPrompt(const Issue& issue, const std::string& code_context);
+};
+
+/**
+ * Anthropic Claude 提供者 (V3.0 新增)
+ * 集成 Anthropic Claude API
+ *
+ * 特性:
+ * - 完整的 HTTP 客户端集成
+ * - Claude Sonnet/Opus API 调用
+ * - 长文本上下文支持 (200K tokens)
+ * - 错误处理和回退机制
+ */
+class AnthropicProvider : public LLMProvider {
+public:
+    explicit AnthropicProvider(const std::string& api_key) : api_key_(api_key) {}
+
+    std::string generateSuggestion(const Issue& issue, const std::string& code_context) override;
+    bool isAvailable() const override;
+    std::string getName() const override { return "Anthropic Claude"; }
 
 private:
     std::string api_key_;
@@ -157,7 +180,8 @@ public:
      */
     enum class ProviderType {
         RULE_BASED,  // 基于规则的内置系统
-        OPENAI,      // OpenAI GPT (未来)
+        OPENAI,      // OpenAI GPT-4
+        ANTHROPIC,   // Anthropic Claude
         NONE         // 禁用 LLM 功能
     };
 

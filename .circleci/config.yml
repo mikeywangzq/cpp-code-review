@@ -1,0 +1,208 @@
+# CircleCI 配置
+# 自动化代码审查流程
+
+version: 2.1
+
+# 定义执行器
+executors:
+  cpp-executor:
+    docker:
+      - image: ubuntu:22.04
+    resource_class: medium
+    working_directory: ~/project
+
+# 定义作业
+jobs:
+  build:
+    executor: cpp-executor
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "CMakeLists.txt" }}
+            - v1-dependencies-
+
+      - run:
+          name: 安装依赖
+          command: |
+            apt-get update -qq
+            apt-get install -y build-essential cmake \
+              llvm-14 llvm-14-dev clang-14 libclang-14-dev \
+              libcurl4-openssl-dev git
+
+      - run:
+          name: 构建项目
+          command: |
+            mkdir -p build
+            cd build
+            cmake .. -DENABLE_CURL=ON -DCMAKE_BUILD_TYPE=Release
+            make -j$(nproc)
+
+      - save_cache:
+          paths:
+            - build
+          key: v1-dependencies-{{ checksum "CMakeLists.txt" }}
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/cpp-agent
+
+  code-review:
+    executor: cpp-executor
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: .
+
+      - run:
+          name: 代码审查
+          command: |
+            # 检查是否为 PR
+            if [ -n "$CIRCLE_PULL_REQUEST" ]; then
+              MODE="--pr --pr-comment=pr-review.md"
+            else
+              MODE="--incremental"
+            fi
+
+            # 污点分析标志
+            TAINT_FLAG=""
+            if [ "${ENABLE_TAINT_ANALYSIS:-true}" = "true" ]; then
+              TAINT_FLAG="--enable-taint-analysis"
+            fi
+
+            # AI 标志
+            AI_FLAGS=""
+            if [ "${ENABLE_AI_SUGGESTIONS:-false}" = "true" ]; then
+              AI_FLAGS="--enable-ai --ai-provider=${AI_PROVIDER:-rule-based}"
+              if [ -n "$OPENAI_API_KEY" ]; then
+                AI_FLAGS="$AI_FLAGS --openai-key=$OPENAI_API_KEY"
+              fi
+              if [ -n "$ANTHROPIC_API_KEY" ]; then
+                AI_FLAGS="$AI_FLAGS --anthropic-key=$ANTHROPIC_API_KEY"
+              fi
+            fi
+
+            ./build/cpp-agent $MODE --std=${CPP_STANDARD:-c++17} $TAINT_FLAG $AI_FLAGS
+
+      - run:
+          name: 检查严重问题
+          command: |
+            if [ -f pr-review.md ]; then
+              if grep -q "CRITICAL\|HIGH" pr-review.md; then
+                echo "⚠️  发现严重或高优先级问题！"
+                cat pr-review.md
+                exit 1
+              fi
+            fi
+
+      - store_artifacts:
+          path: pr-review.md
+          destination: reviews/
+
+  security-scan:
+    executor: cpp-executor
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: .
+
+      - run:
+          name: 安全扫描 (污点分析)
+          command: |
+            ./build/cpp-agent scan . \
+              --std=${CPP_STANDARD:-c++17} \
+              --enable-taint-analysis \
+              --severity-filter=CRITICAL,HIGH \
+              > security-report.txt || true
+
+      - run:
+          name: 分析安全报告
+          command: |
+            if [ -f security-report.txt ]; then
+              echo "📊 安全扫描报告:"
+              cat security-report.txt
+
+              # 检查是否有安全问题
+              if grep -q "CRITICAL\|HIGH" security-report.txt; then
+                echo "⚠️  发现安全漏洞！"
+                exit 1
+              else
+                echo "✅ 未发现安全漏洞"
+              fi
+            fi
+
+      - store_artifacts:
+          path: security-report.txt
+          destination: security/
+
+  generate-report:
+    executor: cpp-executor
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: .
+
+      - run:
+          name: 生成 HTML 报告
+          command: |
+            ./build/cpp-agent scan . \
+              --std=${CPP_STANDARD:-c++17} \
+              --html-output=code-review-report.html
+
+      - store_artifacts:
+          path: code-review-report.html
+          destination: reports/
+
+# 定义工作流
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build
+
+      - code-review:
+          requires:
+            - build
+
+      - security-scan:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - main
+                - master
+                - develop
+
+      - generate-report:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - main
+                - master
+
+  # 定时全量扫描 (每周一次)
+  scheduled:
+    triggers:
+      - schedule:
+          cron: "0 0 * * 0"  # 每周日午夜
+          filters:
+            branches:
+              only:
+                - main
+                - master
+    jobs:
+      - build
+      - security-scan:
+          requires:
+            - build
+      - generate-report:
+          requires:
+            - build

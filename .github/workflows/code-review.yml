@@ -1,0 +1,126 @@
+# GitHub Actions 工作流
+# 在 PR 和 Push 时自动运行代码审查
+
+name: C++ Code Review
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.cc'
+      - '**.hpp'
+  pull_request:
+    branches: [ main, master, develop ]
+    paths:
+      - '**.cpp'
+      - '**.h'
+      - '**.cc'
+      - '**.hpp'
+
+jobs:
+  code-review:
+    name: 代码审查
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # 获取完整历史以支持增量分析
+
+    - name: 安装依赖
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake llvm-14 llvm-14-dev clang-14 libclang-14-dev libcurl4-openssl-dev
+
+    - name: 构建 cpp-agent
+      run: |
+        mkdir -p build
+        cd build
+        cmake .. -DENABLE_CURL=ON
+        make -j$(nproc)
+
+    - name: 运行代码审查 (PR 模式)
+      if: github.event_name == 'pull_request'
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: |
+        ./build/cpp-agent --pr --pr-comment=pr-review.md --enable-taint-analysis --std=c++17
+
+    - name: 运行代码审查 (增量模式)
+      if: github.event_name == 'push'
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: |
+        ./build/cpp-agent --incremental --enable-taint-analysis --std=c++17
+
+    - name: 上传 PR 评论
+      if: github.event_name == 'pull_request' && hashFiles('pr-review.md') != ''
+      uses: actions/upload-artifact@v3
+      with:
+        name: pr-review
+        path: pr-review.md
+
+    - name: 发布 PR 评论
+      if: github.event_name == 'pull_request' && hashFiles('pr-review.md') != ''
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const comment = fs.readFileSync('pr-review.md', 'utf8');
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+
+    - name: 检查关键问题
+      run: |
+        if [ -f "pr-review.md" ]; then
+          if grep -q "CRITICAL\|HIGH" pr-review.md; then
+            echo "⚠️  发现严重或高优先级问题！"
+            exit 1
+          fi
+        fi
+
+  auto-fix:
+    name: 自动修复 (可选)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 安装依赖
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake llvm-14 llvm-14-dev clang-14 libclang-14-dev
+
+    - name: 构建 cpp-agent
+      run: |
+        mkdir -p build
+        cd build
+        cmake ..
+        make -j$(nproc)
+
+    - name: 运行自动修复
+      run: |
+        ./build/cpp-agent --incremental --auto-fix --backup
+
+    - name: 提交修复
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add -A
+        git diff --staged --quiet || git commit -m "🤖 自动修复代码问题 [skip ci]"
+        git push
