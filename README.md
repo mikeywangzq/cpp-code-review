@@ -19,8 +19,8 @@
 <p align="center">
   <a href="#-快速开始">快速开始</a> •
   <a href="#-核心特性">核心特性</a> •
-  <a href="#-使用方法">使用方法</a> •
-  <a href="#-检测规则">检测规则</a> •
+  <a href="#-v30-新功能">V3.0 新功能</a> •
+  <a href="#-文档中心">文档中心</a> •
   <a href="#-技术架构">技术架构</a>
 </p>
 
@@ -42,8 +42,8 @@
 </td>
 <td>
 
-- 📝 [检测规则](#-检测规则)
-- 🏗️ [技术架构](#️-技术架构)
+- 📚 [文档中心](#-文档中心)
+- 🆕 [V3.0 新功能](#-v30-新功能)
 - 🗺️ [开发路线图](#️-开发路线图)
 - 🤝 [贡献指南](#-贡献指南)
 
@@ -1099,6 +1099,138 @@ cpp-agent scan src/ --enable-taint-analysis
   2. 使用参数化查询或预编译语句
   3. 应用适当的转义函数
 ```
+
+<br>
+
+## 📚 文档中心
+
+<div align="center">
+<h3>📖 完整的文档和指南</h3>
+<p><em>从入门到精通，一站式文档中心</em></p>
+</div>
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 📘 入门指南
+
+- **[快速开始](docs/Quick-Start.md)** - 5分钟快速上手
+  - 安装和构建
+  - 基本使用
+  - 常见问题
+
+- **[V3.0 完整功能文档](docs/V3.0-Features.md)** - 详细功能说明
+  - 自动代码修复
+  - LLM API 集成
+  - VS Code 扩展
+  - 数据流污点分析
+  - 架构设计
+  - API 参考
+
+</td>
+<td width="50%" valign="top">
+
+### 📗 高级指南
+
+- **[CI/CD 集成指南](docs/CI-CD-Integration.md)** - 多平台集成
+  - GitHub Actions 完整配置
+  - GitLab CI/CD 配置
+  - CircleCI 配置
+  - Jenkins Pipeline
+  - 最佳实践
+
+- **[VS Code 扩展文档](vscode-extension/README.md)** - IDE 集成
+  - 安装和配置
+  - 功能特性
+  - 快捷键参考
+
+</td>
+</tr>
+</table>
+
+### 🔗 快速链接
+
+| 文档 | 描述 | 链接 |
+|------|------|------|
+| 🚀 快速开始 | 5分钟快速上手指南 | [Quick-Start.md](docs/Quick-Start.md) |
+| 📖 V3.0 功能文档 | 完整功能说明和 API 参考 | [V3.0-Features.md](docs/V3.0-Features.md) |
+| 🔄 CI/CD 集成 | 多平台 CI/CD 配置指南 | [CI-CD-Integration.md](docs/CI-CD-Integration.md) |
+| 💻 VS Code 扩展 | IDE 集成使用文档 | [vscode-extension/](vscode-extension/README.md) |
+
+### 💡 使用示例
+
+<details>
+<summary><b>🔮 自动修复示例</b></summary>
+
+```bash
+# 自动修复所有问题
+./build/cpp-agent scan main.cpp --auto-fix
+
+# 交互式修复
+./build/cpp-agent scan main.cpp --auto-fix --interactive
+
+# 只修复严重问题
+./build/cpp-agent scan main.cpp --auto-fix --severity-filter=CRITICAL,HIGH
+```
+
+</details>
+
+<details>
+<summary><b>🤖 AI 智能建议示例</b></summary>
+
+```bash
+# 使用 OpenAI GPT-4
+export OPENAI_API_KEY="sk-your-key"
+./build/cpp-agent scan main.cpp --enable-ai --ai-provider=openai
+
+# 使用 Anthropic Claude
+export ANTHROPIC_API_KEY="sk-ant-your-key"
+./build/cpp-agent scan main.cpp --enable-ai --ai-provider=anthropic
+```
+
+</details>
+
+<details>
+<summary><b>🔬 污点分析示例</b></summary>
+
+```bash
+# 检测安全漏洞
+./build/cpp-agent scan src/ --enable-taint-analysis
+
+# 只显示安全问题
+./build/cpp-agent scan src/ \
+  --enable-taint-analysis \
+  --severity-filter=CRITICAL,HIGH
+```
+
+</details>
+
+<details>
+<summary><b>🔄 CI/CD 集成示例</b></summary>
+
+**GitHub Actions:**
+
+```yaml
+- name: Code Review
+  run: |
+    ./build/cpp-agent --pr \
+      --pr-comment=review.md \
+      --enable-taint-analysis
+```
+
+**GitLab CI:**
+
+```yaml
+code-review:
+  script:
+    - ./build/cpp-agent --pr --pr-comment=mr-review.md
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+```
+
+</details>
 
 <br>
 
